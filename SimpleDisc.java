@@ -5,12 +5,12 @@ public class SimpleDisc implements Disc{
 public SimpleDisc(Player cur){
     this.Sd = new SimpleDisc(cur);
 }
-    Player player1= new GameLogic().player1;
-    Player player2=new GameLogic().player2;
+    Player player1;
+    Player player2;
 
     @Override
     public Player getOwner() {
-    if (new GameLogic().isFirstPlayerTurn())
+    if (new GameLogic(player1,player2).isFirstPlayerTurn())
 
         return player1;
 
