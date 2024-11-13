@@ -4,7 +4,7 @@
 
 
 public class Position {
-    public boolean [][] board=new boolean[8][8];
+   // public boolean [][] board=new boolean[8][8];
     public static int[] position= new int [2];
     public int row;
     public int col;
@@ -16,9 +16,9 @@ public Position(int row, int col) {
     position[1]=col;
 }
 
-public void fill(Position pos) {
-   board[pos.row][pos.col]=true;
-}
+//public void fill(Position pos) {
+//   board[pos.row][pos.col]=true;
+//}
 
 
 public int row(){

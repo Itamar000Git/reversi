@@ -1,13 +1,23 @@
 import java.util.ArrayList;
 
 public class Move {
-    public Disc disc;
+    private Disc disc;
+    private Position position;
     //public  static Disc[][] Dboard;
     private static int counter = 0;
+
+    public Position position(){
+        return position;
+    }
+
+    public Disc disc(){
+        return disc;
+    }
 
     public Move(Disc disc) {
         this.disc = disc;
     }
+
 
     public static boolean MakeMove(Disc d){
         //Dboard[position().row][position().col]=d;
@@ -15,21 +25,11 @@ public class Move {
         return true;
     }
 
-
     public static boolean Move_counter(){
         if (counter % 2==0){
             return true;
         }
         return false;
-    }
-    public static Position position(){//??????
-
-        return new Position(1,1);
-
-    }
-
-    public Disc disc(){ //??????
-    return disc;
     }
 
 

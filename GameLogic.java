@@ -1,6 +1,7 @@
 //can be change
 
 import java.util.List;
+import java.util.Stack;
 
 public class GameLogic implements PlayableLogic {
 
@@ -8,29 +9,24 @@ public class GameLogic implements PlayableLogic {
     private Disc[][] board;  // Represents the game board
     private Player player1;
     private Player player2;
-    private boolean firstPlayerTurn = true;
+    private Player curent;
+    private Disc d;
+    public boolean firstPlayerTurn = true;
+    public Stack <Move> move_st;
+
     public GameLogic(){
-        new GameLogic(player1,player2);
+        this.board =new Disc[8][8];
+
+
     }
-  public GameLogic(Player player1, Player player2) {
-      this.board = new Disc[8][8];
-      this.player1 = player1;
-      this.player2 = player2;
-
-     initboard();
-      this.firstPlayerTurn = true;
-   }
-
-
-   private void initboard() {
-      int mid = board.length / 2;
-       board[mid - 1][mid - 1] = new SimpleDisc(player1);
-       board[mid][mid] = new SimpleDisc(player1);
-       board[mid - 1][mid] =new  SimpleDisc(player2);
-       board[mid][mid - 1] =new  SimpleDisc(player2);
-
-
-   }
+// public GameLogic(Player player1, Player player2) {
+////      this.board = new Disc[8][8];
+//      this.player1 = player1;
+//      this.player2 = player2;
+////
+////
+////
+//   }
 
 
 
@@ -42,26 +38,30 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-      if(a.board[a.row][a.col]) {
-          System.out.println("This place is invalid");
-          return false;
-      }
+        if(board[a.row][a.col] != null)       //check if the position available
+            return false;
+        if (countFlips(a)==0)
+            return false;
 
-      a.board[a.row][a.col]=true;
-        System.out.println("new disc in:"+ a.board[a.row][a.col]);
-      Move.MakeMove(disc);
+        Player p = disc.getOwner();
+        //if null continue else check how mutch flips?
+
+
+
       return true;
+
     }
 
     @Override
     public Disc getDiscAtPosition(Position position) {
-        return null;
+
+        return board[position.row()][position.col()];
     }
 
     @Override
     public int getBoardSize() {
 
-        return 64;
+        return board.length;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public int countFlips(Position a) {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -87,13 +87,17 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void setPlayers(Player player1, Player player2) {
+
        this.player1=player1;
        this.player2=player2;
+//       player1.isHuman();
+//       player2.isHuman();
     }
 
     @Override
     public boolean isFirstPlayerTurn() {
-        return Move.Move_counter();
+        return firstPlayerTurn;
+
     }
 
     @Override
@@ -104,7 +108,12 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void reset() {
-
+        board =new Disc[8][8];
+        board[3][3] = new SimpleDisc(player1);
+        board[4][4] = new SimpleDisc(player1);
+        board[3][4] =new  SimpleDisc(player2);
+        board[4][3] =new  SimpleDisc(player2);
+        curent=player1;
     }
 
     @Override
