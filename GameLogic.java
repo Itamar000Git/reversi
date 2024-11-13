@@ -11,7 +11,7 @@ public class GameLogic implements PlayableLogic {
     private Player player2;
     private Player curent;
     private Disc d;
-    public boolean firstPlayerTurn = true;
+    public static boolean firstPlayerTurn = true;
     public Stack <Move> move_st;
 
     public GameLogic(){
@@ -38,12 +38,18 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        if(board[a.row][a.col] != null)       //check if the position available
+        if(board[a.row][a.col] != null || countFlips(a)==0) {//check if the position available
+            System.out.println("this move is invalid");
             return false;
-        if (countFlips(a)==0)
-            return false;
+        }
 
-        Player p = disc.getOwner();
+        Move m = new Move(disc);
+        m.MakeMove(disc,board,a);
+
+        //board[a.row][a.col]=disc;
+//       Move m= new Move(disc);
+//        m.MakeMove(disc);
+        //Player p = disc.getOwner();
         //if null continue else check how mutch flips?
 
 

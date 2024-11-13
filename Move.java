@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Move {
     private Disc disc;
     private Position position;
+    private Player cur;
     //public  static Disc[][] Dboard;
     private static int counter = 0;
 
@@ -19,13 +20,19 @@ public class Move {
     }
 
 
-    public static boolean MakeMove(Disc d){
-        //Dboard[position().row][position().col]=d;
-        System.out.println("the disc dit:" + d.getType());
+    public boolean MakeMove(Disc d,Disc[][] bo, Position p){
+
+        cur=d.getOwner();
+        bo[p.row][p.col]=new SimpleDisc(cur);
+        System.out.println(cur);
+
+        //board[position().row][position().col]=d;
+        System.out.println("the disc is:" + d.getType());
+        GameLogic.firstPlayerTurn=!GameLogic.firstPlayerTurn;
         return true;
     }
 
-    public static boolean Move_counter(){
+    public boolean Move_counter(){
         if (counter % 2==0){
             return true;
         }
