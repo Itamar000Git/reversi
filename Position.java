@@ -22,7 +22,7 @@ public Position(int row, int col) {
 
 
 public int row(){
-    return row;
+    return  row;
 }
 public int col(){
     return col;

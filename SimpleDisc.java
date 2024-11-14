@@ -27,6 +27,7 @@ public SimpleDisc(Player cur){
 //
 //       }
         curentplayer =player;
+
 ////maybe add 1 to the move counter.
     }
 

@@ -45,19 +45,31 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        if(board[a.row][a.col] != null || countFlips(a)==0 || !neighbor[a.row][a.col]) {//check if the position available
+
+
+
+        if(board[a.row][a.col] != null || !neighbor[a.row][a.col]) {//check if the position available
             System.out.println("this move is invalid");
             return false;
         }
 
-
+        curent=disc.getOwner();
+        countFlips(a);
 
         Move m = new Move(disc);
         m.MakeMove(disc,board,a);
+//        if ( countFlips(a)==0){
+//            System.out.println("this move is invalid");
+//            return false;
+//        }
+
+
+
+
 
         int r=a.row, c=a.col;
 
-        if(r < 7 & r>0 & c<7 & c>0){
+        if(r < 7 && r>0 && c<7 && c>0){
             neighbor[r+1][c]=true;
             neighbor[r+1][c+1]=true;
             neighbor[r][c+1]=true;
@@ -74,63 +86,59 @@ public class GameLogic implements PlayableLogic {
                 neighbor[r+1][c+1]=true;
                 neighbor[r+1][c]=true;
             }
-            if (c==7){
-                neighbor[r-1][c-1]=true;
-                neighbor[r-1][c]=true;
+            else if (c==7){
                 neighbor[r][c-1]=true;
+                neighbor[r+1][c-1]=true;
+                neighbor[r+1][c]=true;
             }
-            neighbor[r][c-1]=true;
-            neighbor[r+1][c-1]=true;
-            neighbor[r+1][c]=true;
-            neighbor[r+1][c+1]=true;
-            neighbor[r][c+1]=true;
+            else{
+                neighbor[r][c-1]=true;
+                neighbor[r+1][c-1]=true;
+                neighbor[r+1][c]=true;
+                neighbor[r+1][c+1]=true;
+                neighbor[r][c+1]=true;
+            }
+
 
         }
-
-        if (r==7){
+       else if (r==7){
             if (c==0){
                 neighbor[r-1][c]=true;
                 neighbor[r-1][c+1]=true;
                 neighbor[r][c+1]=true;
             }
-            if (c==7){
+            else if (c==7){
                 neighbor[r-1][c-1]=true;
                 neighbor[r-1][c]=true;
                 neighbor[r][c-1]=true;
             }
-            neighbor[r][c-1]=true;
-            neighbor[r-1][c-1]=true;
-            neighbor[r-1][c]=true;
-            neighbor[r-1][c+1]=true;
-            neighbor[r][c+1]=true;
+            else {
+                neighbor[r][c-1]=true;
+                neighbor[r-1][c-1]=true;
+                neighbor[r-1][c]=true;
+                neighbor[r-1][c+1]=true;
+                neighbor[r][c+1]=true;
+            }
+
 
         }
+       else {
+           if(c==0){
+               neighbor[r-1][c]=true;
+               neighbor[r-1][c+1]=true;
+               neighbor[r+1][c]=true;
+               neighbor[r+1][c+1]=true;
+               neighbor[r+1][c]=true;
+           }
+           if(c==7){
+               neighbor[r-1][c]=true;
+               neighbor[r-1][c-1]=true;
+               neighbor[r][c-1]=true;
+               neighbor[r+1][c-1]=true;
+               neighbor[r+1][c]=true;
+           }
 
-//        else if(r==0){
-//            if(c==7){
-//                neighbor[r-1][c-1]=true;
-//                neighbor[r-1][c]=true;
-//                neighbor[r+1][c]=true;
-//                neighbor[r+1][c-1]=true;
-//                neighbor[r][c-1]=true;
-//            }
-//            else {
-//                neighbor[r - 1][c] = true;
-//                neighbor[r + 1][c] = true;
-//                neighbor[r - 1][c + 1] = true;
-//                neighbor[r][c + 1] = true;
-//                neighbor[r + 1][c + 1] = true;
-//            }
-//        else {
-//                if(c==7){
-//
-//                }
-//
-//            }
-//
-//        }
-
-
+        }
 
       return true;
 
@@ -158,12 +166,120 @@ public class GameLogic implements PlayableLogic {
         return List.of();
     }
 
+
+
+    /**
+     * when we here the move is valid
+     * @param a
+     * @return
+     */
     @Override
     public int countFlips(Position a) {
+      //  Position p = new Position(a.row,a.col);
+        int count=0;
+        int x=a.row();
+        int y=a.col();
+
+        System.out.println("x: "+x +" y: "+y);
+        y=y+1;
+        //right
+         while (x<8 && y<8  && board[x][y]!=null ){
+             if(board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
+                 //x++;
+                 y++;
+                 count++;
+             }
+             else break;
+        }
+        x=a.row()+1;
+        y=a.col();
+
+        //down
+        while (x<8 && y<8  && board[x][y]!=null ){
+            if(board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
+                x++;
+                //y++;
+                count++;
+            }
+            else break;
+        }
+        x=a.row();
+        y=a.col()-1;
+        //left
+        while (x>(-1) && y>(-1)  && board[x][y]!=null  ){
+            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
+                // x--;
+                y--;
+                count++;
+            }
+            else break;
+        }
+        x=a.row()-1;
+        y=a.col();
+        //up
+        while (x>(-1) && y>(-1)  && board[x][y]!=null ){
+            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne ) {
+                x--;
+                //y--;
+                count++;
+            }
+            else break;
+        }
+        x=a.row()+1;
+        y=a.col()+1;
+        //right down
+        while (x<8 && y<8 && board[x][y]!=null) {
+            if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne ) {
+                x++;
+                y++;
+                count++;
+            }
+            else break;
+        }
+        x=a.row()-1;
+        y=a.col()-1;
+        //left up
+        while (x>(-1) && y>(-1)  && board[x][y]!=null ){
+            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne ) {
+                x--;
+                y--;
+                count++;
+            }
+            else break;
+        }
+        x=a.row()+1;
+        y=a.col()-1;
+        //left down
+        while (x<8 && y>(-1) &&  board[x][y]!=null){
+            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne ) {
+                x++;
+                y--;
+                count++;
+            }
+            else break;
+        }
+        x=a.row()-1;
+        y=a.col()+1;
+        //right up
+        while (x>(-1) && y<8  && board[x][y]!=null ){
+            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
+                x--;
+                y++;
+                count++;
+            }
+            else break;
+        }
+        //System.out.println(count);
 
 
 
-        return 1;
+
+       // if(board[x][y].getOwner()!=curent) {
+             System.out.println(count);
+        return count;
+       // }
+
+       // return 0;
     }
 
     @Override
