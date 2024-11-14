@@ -1,5 +1,6 @@
 //can be change
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -54,18 +55,15 @@ public class GameLogic implements PlayableLogic {
         }
 
         curent=disc.getOwner();
-        countFlips(a);
+       // countFlips(a);
 
+        //ValidMoves();
         Move m = new Move(disc);
         m.MakeMove(disc,board,a);
 //        if ( countFlips(a)==0){
 //            System.out.println("this move is invalid");
 //            return false;
 //        }
-
-
-
-
 
         int r=a.row, c=a.col;
 
@@ -157,13 +155,21 @@ public class GameLogic implements PlayableLogic {
     }
 
     @Override
-    public List<Position> ValidMoves() {
-        // check if there is disc next
-        for (int i =0 ;i<board.length;i++){
+    public  List<Position> ValidMoves() {
+        List <Position> my_L = new ArrayList<>();
+
+        for (int i=0; i< 8; i++){
+            for (int j=0; j<8;j++){
+                Position p=new Position(i,j);
+                if (neighbor[i][j] && board[i][j]==null && countFlips(p)>0){
+                    my_L.add(p);
+                   // System.out.println(my_L.getFirst().row +" "+ my_L.getFirst().col);
+                }
+            }
 
         }
 
-        return List.of();
+        return my_L;
     }
 
 
@@ -175,6 +181,7 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public int countFlips(Position a) {
+
         int count=0, tmp_count=0;
         int x=a.row();
         int y=a.col();
@@ -352,8 +359,7 @@ public class GameLogic implements PlayableLogic {
 
        this.player1=player1;
        this.player2=player2;
-//       player1.isHuman();
-//       player2.isHuman();
+
     }
 
     @Override
