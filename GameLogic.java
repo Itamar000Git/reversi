@@ -7,6 +7,7 @@ public class GameLogic implements PlayableLogic {
 
 
     private Disc[][] board;  // Represents the game board
+    private boolean[][] neighbor;
     private Player player1;
     private Player player2;
     private Player curent;
@@ -16,6 +17,12 @@ public class GameLogic implements PlayableLogic {
 
     public GameLogic(){
         this.board =new Disc[8][8];
+        this.neighbor=new boolean[8][8];
+      //  this.d = new Disc();
+        if(isFirstPlayerTurn()){
+            curent=player1;
+        }
+        else curent=player2;
 
 
     }
@@ -38,19 +45,90 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-        if(board[a.row][a.col] != null || countFlips(a)==0) {//check if the position available
+        if(board[a.row][a.col] != null || countFlips(a)==0 || !neighbor[a.row][a.col]) {//check if the position available
             System.out.println("this move is invalid");
             return false;
         }
 
+
+
         Move m = new Move(disc);
         m.MakeMove(disc,board,a);
 
-        //board[a.row][a.col]=disc;
-//       Move m= new Move(disc);
-//        m.MakeMove(disc);
-        //Player p = disc.getOwner();
-        //if null continue else check how mutch flips?
+        int r=a.row, c=a.col;
+
+        if(r < 7 & r>0 & c<7 & c>0){
+            neighbor[r+1][c]=true;
+            neighbor[r+1][c+1]=true;
+            neighbor[r][c+1]=true;
+            neighbor[r-1][c+1]=true;
+            neighbor[r-1][c]=true;
+            neighbor[r-1][c-1]=true;
+            neighbor[r][c-1]=true;
+            neighbor[r+1][c-1]=true;
+        }
+
+        if(r==0){
+            if(c==0){
+                neighbor[r][c+1]=true;
+                neighbor[r+1][c+1]=true;
+                neighbor[r+1][c]=true;
+            }
+            if (c==7){
+                neighbor[r-1][c-1]=true;
+                neighbor[r-1][c]=true;
+                neighbor[r][c-1]=true;
+            }
+            neighbor[r][c-1]=true;
+            neighbor[r+1][c-1]=true;
+            neighbor[r+1][c]=true;
+            neighbor[r+1][c+1]=true;
+            neighbor[r][c+1]=true;
+
+        }
+
+        if (r==7){
+            if (c==0){
+                neighbor[r-1][c]=true;
+                neighbor[r-1][c+1]=true;
+                neighbor[r][c+1]=true;
+            }
+            if (c==7){
+                neighbor[r-1][c-1]=true;
+                neighbor[r-1][c]=true;
+                neighbor[r][c-1]=true;
+            }
+            neighbor[r][c-1]=true;
+            neighbor[r-1][c-1]=true;
+            neighbor[r-1][c]=true;
+            neighbor[r-1][c+1]=true;
+            neighbor[r][c+1]=true;
+
+        }
+
+//        else if(r==0){
+//            if(c==7){
+//                neighbor[r-1][c-1]=true;
+//                neighbor[r-1][c]=true;
+//                neighbor[r+1][c]=true;
+//                neighbor[r+1][c-1]=true;
+//                neighbor[r][c-1]=true;
+//            }
+//            else {
+//                neighbor[r - 1][c] = true;
+//                neighbor[r + 1][c] = true;
+//                neighbor[r - 1][c + 1] = true;
+//                neighbor[r][c + 1] = true;
+//                neighbor[r + 1][c + 1] = true;
+//            }
+//        else {
+//                if(c==7){
+//
+//                }
+//
+//            }
+//
+//        }
 
 
 
@@ -72,11 +150,19 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public List<Position> ValidMoves() {
+        // check if there is disc next
+        for (int i =0 ;i<board.length;i++){
+
+        }
+
         return List.of();
     }
 
     @Override
     public int countFlips(Position a) {
+
+
+
         return 1;
     }
 
@@ -120,6 +206,19 @@ public class GameLogic implements PlayableLogic {
         board[3][4] =new  SimpleDisc(player2);
         board[4][3] =new  SimpleDisc(player2);
         curent=player1;
+
+        neighbor[2][2]=true;
+        neighbor[2][3]=true;
+        neighbor[2][4]=true;
+        neighbor[2][5]=true;
+        neighbor[3][2]=true;
+        neighbor[3][5]=true;
+        neighbor[4][2]=true;
+        neighbor[4][5]=true;
+        neighbor[5][2]=true;
+        neighbor[5][3]=true;
+        neighbor[5][4]=true;
+        neighbor[5][5]=true;
     }
 
     @Override

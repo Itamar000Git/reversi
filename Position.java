@@ -28,11 +28,4 @@ public int col(){
     return col;
 }
 
-
-
-
-
-
-
-
 }
