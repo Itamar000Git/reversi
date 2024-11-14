@@ -23,7 +23,14 @@ public class Move {
     public boolean MakeMove(Disc d,Disc[][] bo, Position p){
 
         cur=d.getOwner();
-        bo[p.row][p.col]=new SimpleDisc(cur);
+        if(d.getType().equals("⭕")){
+            bo[p.row][p.col]=new UnflippableDisc(cur);
+        } else if (d.getType().equals("💣")) {
+            bo[p.row][p.col]=new BombDisc(cur);
+        }
+        else {
+            bo[p.row][p.col] = new SimpleDisc(cur);
+        }
         System.out.println(cur);
 
         //board[position().row][position().col]=d;

@@ -1,6 +1,6 @@
 
 public class SimpleDisc implements Disc {
-    public SimpleDisc Sd;
+   // public SimpleDisc Sd;
     private Player curentplayer;
 
 
@@ -8,6 +8,7 @@ public class SimpleDisc implements Disc {
 public SimpleDisc(Player cur){
     this.curentplayer = cur;
     //this.Sd=Sd;
+   // Sd.setOwner(curentplayer);
 }
 //    Player player1;
 //    Player player2;

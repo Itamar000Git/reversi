@@ -175,111 +175,165 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public int countFlips(Position a) {
-      //  Position p = new Position(a.row,a.col);
-        int count=0;
+        int count=0, tmp_count=0;
         int x=a.row();
         int y=a.col();
-
         System.out.println("x: "+x +" y: "+y);
+
         y=y+1;
+        tmp_count=count;
         //right
-         while (x<8 && y<8  && board[x][y]!=null ){
-             if(board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
-                 //x++;
-                 y++;
-                 count++;
+         while (x<8 && y<8 ){
+             if(board[x][y]!=null) {
+                 if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                     //x++;
+                     y++;
+                     count++;
+                 } else break;
              }
-             else break;
+             else{
+                 count=tmp_count;
+                 break;
+             }
         }
+
+
         x=a.row()+1;
         y=a.col();
-
+        tmp_count=count;
         //down
-        while (x<8 && y<8  && board[x][y]!=null ){
-            if(board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
-                x++;
-                //y++;
-                count++;
+        while (x<8 && y<8  ){
+            if(board[x][y]!=null) {
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    x++;
+                    //y++;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
+
         }
+
+
         x=a.row();
         y=a.col()-1;
+        tmp_count=count;
         //left
-        while (x>(-1) && y>(-1)  && board[x][y]!=null  ){
-            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
-                // x--;
-                y--;
-                count++;
+        while (x>0 && y>0 ){
+            if(board[x][y]!=null) {
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    // x--;
+                    y--;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
         }
+
+        tmp_count=count;
         x=a.row()-1;
         y=a.col();
         //up
-        while (x>(-1) && y>(-1)  && board[x][y]!=null ){
-            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne ) {
-                x--;
-                //y--;
-                count++;
+        while (x>(-1) && y>(-1)  ){
+            if(board[x][y]!=null) {
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    x--;
+                    //y--;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
         }
+
+
+        tmp_count=count;
         x=a.row()+1;
         y=a.col()+1;
         //right down
-        while (x<8 && y<8 && board[x][y]!=null) {
-            if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne ) {
-                x++;
-                y++;
-                count++;
+        while (x<8 && y<8) {
+            if(board[x][y]!=null) {
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    x++;
+                    y++;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
         }
+
+
+        tmp_count=count;
         x=a.row()-1;
         y=a.col()-1;
         //left up
-        while (x>(-1) && y>(-1)  && board[x][y]!=null ){
-            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne ) {
-                x--;
-                y--;
-                count++;
+        while (x>(-1) && y>(-1)  ){
+            if(board[x][y]!=null) {
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    x--;
+                    y--;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
         }
+
+
+        tmp_count=count;
         x=a.row()+1;
         y=a.col()-1;
         //left down
-        while (x<8 && y>(-1) &&  board[x][y]!=null){
-            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne ) {
-                x++;
-                y--;
-                count++;
+        while (x<8 && y>(-1) ){
+            if(board[x][y]!=null) {
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    x++;
+                    y--;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
         }
+
+
+        tmp_count=count;
         x=a.row()-1;
         y=a.col()+1;
         //right up
-        while (x>(-1) && y<8  && board[x][y]!=null ){
-            if (board[x][y].getOwner().isPlayerOne!=curent.isPlayerOne) {
-                x--;
-                y++;
-                count++;
+        while (x>(-1) && y<8 ){
+            if(board[x][y]!=null) {
+
+                if (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne) {
+                    x--;
+                    y++;
+                    count++;
+                } else break;
             }
-            else break;
+            else{
+                count=tmp_count;
+                break;
+            }
+
         }
-        //System.out.println(count);
 
-
-
-
-       // if(board[x][y].getOwner()!=curent) {
              System.out.println(count);
         return count;
-       // }
-
-       // return 0;
     }
 
     @Override
