@@ -39,7 +39,8 @@ public class GameLogic implements PlayableLogic {
      */
     @Override
     public boolean locate_disc(Position a, Disc disc) {
-int c=countFlips(a);
+        flipper.clear();
+    int c=countFlips(a);
         if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset)) {//check if the position available
             System.out.println("this move is invalid");
             return false;
@@ -57,9 +58,10 @@ int c=countFlips(a);
         neighbor_Update(a);
         //ValidMoves();
         System.out.println("The amount of dist to flip is: "+c+"\ntheir position is: ");
-//        for (int i=0; i<flipper.size(); i++){
-//            System.out.println("( "+flipper.get(i).row+" , "+flipper.get(i).col+" )" );
-//        }
+        //countFlips(a);
+        for (int i=0; i<flipper.size(); i++){
+            System.out.println("( "+flipper.get(i).row+" , "+flipper.get(i).col+" )" );
+        }
 
 
       return true;
@@ -129,28 +131,20 @@ int c=countFlips(a);
                 y--;
             }
             if (y==8 || y==(-1) || x==8 || x ==(-1)){ //if the while loop reached to that spot the last dist belong to the opponent and there is no flips
-//                for (int i=0;(i<=count-tmp_count)&!flipper.isEmpty();i++){
-//                    flipper.removeLast();
-//                }
-                count=tmp_count;
+
+                count=0;
                 break;
             }
 
             if (board[x][y] == null) {  //if there is a null spot we need to stop and delete the last count
 
-//                    for (int i=0;(i<count-tmp_count)&!flipper.isEmpty();i++){
-//                        flipper.removeLast();
-//                    }
-
-                        count=tmp_count;
+                        count=0;
                 break;
             }
 
 
             if ((board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){ //checking if that this is the opponent disc
-//                if (!reset){
-//                    flipper.add(p);
-//                }
+
 
                 count++;
             }else if (count==0){
@@ -158,7 +152,7 @@ int c=countFlips(a);
             }
             else {
                 //this spot means that we count few position and we can add them to fliiper, and update tmp_counter
-                tmp_count=count;
+               // tmp_count=count;
                 return count;
             }
 
@@ -267,18 +261,21 @@ int c=countFlips(a);
 
     @Override
     public void reset() {
-        reset=true;
+       // reset=true;
         board =new Disc[8][8];
         board[3][3] = new SimpleDisc(player2);
         board[4][4] = new SimpleDisc(player2);
         board[3][4] =new  SimpleDisc(player1);
         board[4][3] =new  SimpleDisc(player1);
         curent=player1;
+        firstPlayerTurn=true;
+
         for (int i=2; i<6;i++){
             for( int j=2; j<6;j++){
                 neighbor[i][j]=true;
             }
         }
+
 
 
     }
@@ -288,7 +285,7 @@ int c=countFlips(a);
 
     }
 
-    private void neighbor_Update(Position a){
+    private  void neighbor_Update(Position a){
         int r=a.row, c=a.col;
 
         if(r < 7 && r>0 && c<7 && c>0){
@@ -385,7 +382,7 @@ int c=countFlips(a);
         }
         else if (side.equals("down")) {
             for (int i=0; i<co;i++){
-                x=x-1;
+                x=x+1;
                 flipper.add(new Position(x,y));
             }
         }
@@ -425,41 +422,5 @@ int c=countFlips(a);
         }
     }
 
-//    public static boolean flip(Position p){
-//        countFlips
-//
-//
-//        for (int i=0;i<GameLogic.flipper.size();i++){
-//            System.out.println("Im going to flip: x: "+GameLogic.flipper.get(i).row()+" y: "+GameLogic.flipper.get(i).col());
-//        }
-//
-//
-//        return true;
-//    }
+
 }
-
-
-//  if (co_L>0){
-//to_Flip(co_L,"left",a);
-//        }
-//                if (co_R>0){
-//to_Flip(co_R,"right",a);
-//        }
-//                if (co_U>0){
-//to_Flip(co_U,"up",a);
-//        }
-//                if (co_D>0){
-//to_Flip(co_D,"down",a);
-//        }
-//                if (co_LU>0){
-//to_Flip(co_LU,"left_up",a);
-//        }
-//                if (co_RU>0){
-//to_Flip(co_RU,"right_up",a);
-//        }
-//                if (co_RD>0){
-//to_Flip(co_RD,"right_down",a);
-//        }
-//                if (co_LD>0){
-//to_Flip(co_LD,"left_down",a);
-//        }

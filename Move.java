@@ -21,9 +21,15 @@ public class Move {
 
 
     public boolean MakeMove(Disc d,Disc[][] bo, Position p){
-        GameLogic.reset=false;
-        GameLogic.flipper.clear();
+       // GameLogic.reset=false;
+       // GameLogic.flipper.clear();
         cur=d.getOwner();
+
+        for (int i=0; i<GameLogic.flipper.size(); i++){
+            System.out.println("( "+GameLogic.flipper.get(i).row+" , "+ GameLogic.flipper.get(i).col+" )" );
+            flip(GameLogic.flipper.get(i),bo);
+        }
+
         if(d.getType().equals("⭕")){
             bo[p.row][p.col]=new UnflippableDisc(cur);
         } else if (d.getType().equals("💣")) {
@@ -38,6 +44,13 @@ public class Move {
         else {
             System.out.println("This is player 2 move:");
         }
+       // System.out.println(GameLogic.flipper.size());
+
+//        GameLogic.flipper.clear();
+
+
+
+
 
        // GameLogic.flip(p);
 
@@ -48,14 +61,10 @@ public class Move {
         //GameLogic.firstPlayerTurn=!GameLogic.firstPlayerTurn;
         return true;
     }
+    public  boolean flip(Position p,Disc[][] bo){
+        bo[p.row()][p.col()].setOwner(cur);
 
-
-
-    public boolean Move_counter(){
-        if (counter % 2==0){
-            return true;
-        }
-        return false;
+        return true;
     }
 
 
