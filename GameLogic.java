@@ -153,14 +153,17 @@ public class GameLogic implements PlayableLogic {
                 count--;
             }
             //if(board[p.row()][p.col()] != null) {
-                if (board[x][y].getType().equals("💣")) {
-                   // count += bombCounter(p);
-                   // count += bombCounter(x,y);
 
-                }
             //}
             if ((board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){ //checking if that this is the opponent disc
-                count++;
+                if (board[x][y].getType().equals("💣")) {
+                    // count += bombCounter(p);
+                     count += bombCounter(x,y);
+
+                }else {
+                    count++;
+                }
+
             }else if (count==0){
                 break;
             }
@@ -450,11 +453,13 @@ public class GameLogic implements PlayableLogic {
             }
         }
     }
-    private int bcHelper(int b_C,int x, int y){
+    private int bcHelper(int x, int y){
      //   int x = p.row(), y = p.col();
+        int b_C=0;
         if (board[x][y]!=null) {
             if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕")) {
                 b_C++;
+                flipper.add(new Position(x,y));
             }
         }
         return b_C;
@@ -515,42 +520,42 @@ public class GameLogic implements PlayableLogic {
         if ((x < 7) & (x > 0) & (y < 7) & (y > 0)) {
             if (left) {
                 y--;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 y++;
             }  if (right) {
                 y++;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 y--;
             }  if (up) {
                 x--;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 x++;
             } if (down) {
                 x++;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 x--;
             } if (leftUp) {
                 x--;
                 y--;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 x++;
                 y++;
             } if (rightUp) {
                 x--;
                 y++;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 x++;
                 y--;
             } if (rightDown) {
                 x++;
                 y++;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 x--;
                 y--;
             } if (leftDown) {
                 x++;
                 y--;
-                counter+=bcHelper(counter,x,y);
+                counter+=bcHelper(x,y);
                 x--;
                 y++;
             }
