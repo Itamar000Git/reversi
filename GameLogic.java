@@ -52,16 +52,24 @@ public class GameLogic implements PlayableLogic {
 
         if(isFirstPlayerTurn()){
             curent=player1;
-        }
-        else curent=player2;
+            for (int i=0; i<flipper.size(); i++){
 
-        neighbor_Update(a);
-        //ValidMoves();
-        System.out.println("The amount of dist to flip is: "+c+"\ntheir position is: ");
-        //countFlips(a);
-        for (int i=0; i<flipper.size(); i++){
-            System.out.println("( "+flipper.get(i).row+" , "+flipper.get(i).col+" )" );
+                System.out.println("Player 1 flipped the: "+disc.getType()+" in: ("+flipper.get(i).row+" , "+flipper.get(i).col+")" );
+            }
         }
+        else {
+            curent = player2;
+            for (int i=0; i<flipper.size(); i++){
+
+                System.out.println("Player 2 flipped the: "+disc.getType()+" in: ("+flipper.get(i).row+" , "+flipper.get(i).col+")" );
+            }
+        }
+        neighbor_Update(a);
+        System.out.println("");
+        //ValidMoves();
+        //System.out.println("The amount of dist to flip is: "+c+"\ntheir position is: ");
+        //countFlips(a);
+
 
 
       return true;
@@ -141,6 +149,11 @@ public class GameLogic implements PlayableLogic {
                         count=0;
                 break;
             }
+            if (board[x][y].getType().equals("⭕")){
+                count--;
+            }
+
+
 
 
             if ((board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){ //checking if that this is the opponent disc
@@ -254,8 +267,28 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public boolean isGameFinished() {
-       if(ValidMoves().isEmpty())
+       if(ValidMoves().isEmpty()){
+           int discs_1=0, discs_2=0;
+           for(int i=0; i<8; i++){
+               for(int j=0; j<8; j++){
+                   if (board[i][j]!=null){
+                       if(board[i][j].getOwner().isPlayerOne){
+                           discs_1++;
+                       }
+                       else discs_2++;
+                   }
+               }
+           }
+           if (discs_1>discs_2){
+               System.out.println("Player 1 wuins with: " + discs_1 + " discs! Player 2 had: " + discs_2 + "discs." );
+               player1.wins++;
+           } else if (discs_2>discs_1) {
+               System.out.println("Player 2 wuins with: " + discs_1 + " discs! Player 1 had: " + discs_2 + "discs." );
+               player2.wins++;
+           }
            return true;
+       }
+
         return false;
     }
 

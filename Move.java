@@ -25,10 +25,7 @@ public class Move {
        // GameLogic.flipper.clear();
         cur=d.getOwner();
 
-        for (int i=0; i<GameLogic.flipper.size(); i++){
-            System.out.println("( "+GameLogic.flipper.get(i).row+" , "+ GameLogic.flipper.get(i).col+" )" );
-            flip(GameLogic.flipper.get(i),bo);
-        }
+
 
         if(d.getType().equals("⭕")){
             bo[p.row][p.col]=new UnflippableDisc(cur);
@@ -38,30 +35,27 @@ public class Move {
         else {
             bo[p.row][p.col] = new SimpleDisc(cur);
         }
+
+
         if (cur.isPlayerOne){
-            System.out.println("This is player 1 move:");
+            System.out.println("Player 1 placed a " + d.getType()+ " in: (" + p.row() + " , " + p.col() + ")");
         }
         else {
-            System.out.println("This is player 2 move:");
+            System.out.println("Player 2 placed a " + d.getType()+ " in: (" + p.row() + " , " + p.col() + ")");
         }
-       // System.out.println(GameLogic.flipper.size());
 
-//        GameLogic.flipper.clear();
+        for (int i=0; i<GameLogic.flipper.size(); i++){
+            //System.out.println("("+GameLogic.flipper.get(i).row+" , "+ GameLogic.flipper.get(i).col+")" );
+            flip(GameLogic.flipper.get(i),bo);
+        }
 
-
-
-
-
-       // GameLogic.flip(p);
-
-        //flip(d,bo,p);
-
-        //board[position().row][position().col]=d;
-        System.out.println("the disc is:" + d.getType());
-        //GameLogic.firstPlayerTurn=!GameLogic.firstPlayerTurn;
+        //System.out.println("the disc is:" + d.getType());
         return true;
     }
     public  boolean flip(Position p,Disc[][] bo){
+        if (bo[p.row()][p.col()].getType().equals("⭕")){
+            return true;
+        }
         bo[p.row()][p.col()].setOwner(cur);
 
         return true;
