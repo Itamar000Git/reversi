@@ -29,8 +29,10 @@ public class Move {
 
         if(d.getType().equals("⭕")){
             bo[p.row][p.col]=new UnflippableDisc(cur);
+            cur.reduce_unflippedable();
         } else if (d.getType().equals("💣")) {
             bo[p.row][p.col]=new BombDisc(cur);
+            cur.reduce_bomb();
         }
         else {
             bo[p.row][p.col] = new SimpleDisc(cur);

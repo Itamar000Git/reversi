@@ -3,6 +3,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.HashSet;
 
 public class GameLogic implements PlayableLogic {
 
@@ -17,6 +18,7 @@ public class GameLogic implements PlayableLogic {
     public static ArrayList<Position> flipper=new ArrayList<>();
     public Stack <Move> move_st;
     public static boolean reset;
+    public ArrayList <Position> allValid = new ArrayList<>();
 
 
     public GameLogic(){
@@ -27,6 +29,14 @@ public class GameLogic implements PlayableLogic {
             curent=player1;
         }
         else curent=player2;
+
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                if(!(i==3&j==3)&!(i==4&j==4)&!(i==3&j==4)&!(i==4&j==3)) {
+                    allValid.add(new Position(i, j));
+                }
+            }
+        }
 
 
     }
@@ -40,7 +50,7 @@ public class GameLogic implements PlayableLogic {
     @Override
     public boolean locate_disc(Position a, Disc disc) {
         flipper.clear();
-    int c=countFlips(a);
+        int c=countFlips(a);
         if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset)) {//check if the position available
             System.out.println("this move is invalid");
             return false;
@@ -66,11 +76,6 @@ public class GameLogic implements PlayableLogic {
         }
         neighbor_Update(a);
         System.out.println("");
-        //ValidMoves();
-        //System.out.println("The amount of dist to flip is: "+c+"\ntheir position is: ");
-        //countFlips(a);
-
-
 
       return true;
 
@@ -95,16 +100,22 @@ public class GameLogic implements PlayableLogic {
         List <Position> my_L = new ArrayList<>();
 
 
-        for (int i=0; i< 8; i++){
-            for (int j=0; j<8;j++){
-                Position p=new Position(i,j);
-                if (neighbor[i][j] && board[i][j]==null && countFlips(p)>0){
-                    my_L.add(p);
-                   // System.out.println(my_L.getFirst().row +" "+ my_L.getFirst().col);
-                }
+        //for (int i=0; i< 8; i++){
+           // for (int j=0; j<8;j++){
+        for (int i=0;i<allValid.size();i++) {
+            int x= allValid.get(i).row();
+            int y=allValid.get(i).col();
+            Position p = new Position(x,y);
+           // if (neighbor[i][j] && board[i][j] == null && countFlips(p) > 0) {
+            if(neighbor[x][y]&&board[x][y]==null&& countFlips(p)>0) {
+                my_L.add(p);
             }
-
+                // System.out.println(my_L.getFirst().row +" "+ my_L.getFirst().col);
+          //  }
         }
+          //  }
+
+      //  }
 
 
         return my_L;
@@ -156,13 +167,13 @@ public class GameLogic implements PlayableLogic {
 
             //}
             if ((board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){ //checking if that this is the opponent disc
-                if (board[x][y].getType().equals("💣")) {
-                    // count += bombCounter(p);
-                     count += bombCounter(x,y);
+               // if (board[x][y].getType().equals("💣")) {
 
-                }else {
+                //     count += bombCounter(x,y);
+
+                //}else {
                     count++;
-                }
+               // }
 
             }else if (count==0){
                 break;
@@ -279,11 +290,11 @@ public class GameLogic implements PlayableLogic {
                }
            }
            if (discs_1>discs_2){
-               System.out.println("Player 1 wuins with: " + discs_1 + " discs! Player 2 had: " + discs_2 + "discs." );
-               player1.wins++;
+               System.out.println("Player 1 wins with: " + discs_1 + " discs! Player 2 had: " + discs_2 + " discs." );
+               player1.addWin();
            } else if (discs_2>discs_1) {
-               System.out.println("Player 2 wuins with: " + discs_1 + " discs! Player 1 had: " + discs_2 + "discs." );
-               player2.wins++;
+               System.out.println("Player 2 wins with: " + discs_1 + " discs! Player 1 had: " + discs_2 + " discs." );
+               player2.addWin();
            }
            return true;
        }
@@ -398,59 +409,60 @@ public class GameLogic implements PlayableLogic {
         if(side.equals("left")){
             for (int i=0; i<co;i++){
                  y= y-1;
-                flipper.add(new Position(x,y));
-            }
+                addFlipper(x,y);            }
         } else if (side.equals("right")) {
             for (int i=0; i<co;i++){
                 y= y+1;
-                flipper.add(new Position(x,y));
-            }
+                addFlipper(x,y);            }
         }
         else if (side.equals("up")) {
             for (int i=0; i<co;i++){
                 x=x-1;
-                flipper.add(new Position(x,y));
-            }
+                addFlipper(x,y);            }
         }
         else if (side.equals("down")) {
             for (int i=0; i<co;i++){
                 x=x+1;
-                flipper.add(new Position(x,y));
-            }
+                addFlipper(x,y);            }
         }
         else if (side.equals("up")) {
             for (int i=0; i<co;i++){
                 x=x-1;
-                flipper.add(new Position(x,y));
-            }
+                addFlipper(x,y);            }
         }
         else if (side.equals("left_up")) {
             for (int i=0; i<co;i++){
                 x=x-1;
                 y=y-1;
-                flipper.add(new Position(x,y));
-            }
+                addFlipper(x,y);            }
         }
         else if (side.equals("right_up")) {
             for (int i=0; i<co;i++){
                 x=x-1;
                 y=y+1;
-                flipper.add(new Position(x,y));
+                addFlipper(x,y);
             }
         }
         else if (side.equals("right_down")) {
             for (int i=0; i<co;i++){
                 x=x+1;
                 y=y+1;
-                flipper.add(new Position(x,y));
+                addFlipper(x,y);
             }
         }
         else if (side.equals("left_down")) {
             for (int i=0; i<co;i++){
                 x=x+1;
                 y=y-1;
-                flipper.add(new Position(x,y));
+                addFlipper(x,y);
             }
+        }
+    }
+
+    private static void addFlipper(int x, int y){
+        Position p =new Position(x,y);
+        if (!flipper.contains(p)) {
+            flipper.add(p);
         }
     }
     private int bcHelper(int x, int y){
@@ -459,7 +471,7 @@ public class GameLogic implements PlayableLogic {
         if (board[x][y]!=null) {
             if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕")) {
                 b_C++;
-                flipper.add(new Position(x,y));
+                addFlipper(x,y);
             }
         }
         return b_C;
