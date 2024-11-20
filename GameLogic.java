@@ -51,10 +51,19 @@ public class GameLogic implements PlayableLogic {
     public boolean locate_disc(Position a, Disc disc) {
         flipper.clear();
         int c=countFlips(a);
-        if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset)) {//check if the position available
+        if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset) ) {//check if the position available
             System.out.println("this move is invalid");
             return false;
         }
+
+//        if (curent.getNumber_of_bombs()==0){
+//            System.out.println("number of bombs is 0");
+//            return false;
+//        }
+//        if (curent.getNumber_of_unflippedable()==0){
+//            System.out.println("number of unflippedable is 0");
+//            return false;
+//        }
 
         Move m = new Move(disc);
         m.MakeMove(disc,board,a);
@@ -107,7 +116,7 @@ public class GameLogic implements PlayableLogic {
             int y=allValid.get(i).col();
             Position p = new Position(x,y);
            // if (neighbor[i][j] && board[i][j] == null && countFlips(p) > 0) {
-            if(neighbor[x][y]&&board[x][y]==null&& countFlips(p)>0) {
+            if(neighbor[x][y] && board[x][y]==null && countFlips(p)>0) {
                 my_L.add(p);
             }
                 // System.out.println(my_L.getFirst().row +" "+ my_L.getFirst().col);
@@ -160,6 +169,10 @@ public class GameLogic implements PlayableLogic {
                         count=0;
                 break;
             }
+            else if (board[x][y].getType().equals("💣")&&(board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){
+                count += bombCounter(x,y);
+            }
+
             if (board[x][y].getType().equals("⭕")){
                 count--;
             }
@@ -167,13 +180,9 @@ public class GameLogic implements PlayableLogic {
 
             //}
             if ((board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){ //checking if that this is the opponent disc
-               // if (board[x][y].getType().equals("💣")) {
 
-                //     count += bombCounter(x,y);
-
-                //}else {
                     count++;
-               // }
+
 
             }else if (count==0){
                 break;
@@ -200,7 +209,6 @@ public class GameLogic implements PlayableLogic {
     public int countFlips(Position a) {
         int count;
       //  if (!reset){
-
             int co_L= countHelper(true,false,false,false,false,false,false,false,a);
             int co_R= countHelper(false,true,false,false,false,false,false,false,a);
             int co_U= countHelper(false,false,true,false,false,false,false,false,a);
@@ -237,13 +245,9 @@ public class GameLogic implements PlayableLogic {
         if (co_LD>0){
             to_Flip(co_LD,"left_down",a);
         }
-
-
         // in this point i have number of flipps for each side
 
         return count;
-
-
     }
 
 
@@ -312,6 +316,11 @@ public class GameLogic implements PlayableLogic {
         board[4][3] =new  SimpleDisc(player1);
         curent=player1;
         firstPlayerTurn=true;
+
+        player1.number_of_bombs = Player.initial_number_of_bombs;
+        player2.number_of_bombs = Player.initial_number_of_bombs;
+        player1.number_of_unflippedable = Player.initial_number_of_unflippedable;
+        player2.number_of_unflippedable = Player.initial_number_of_unflippedable;
 
         for (int i=2; i<6;i++){
             for( int j=2; j<6;j++){
@@ -485,41 +494,41 @@ public class GameLogic implements PlayableLogic {
 
         if ((x < 7) & (x > 0) & (y < 7) & (y > 0)) {
             //checking all directions
-            b_C+=bcHelper2(true,true,true,true,true,true,true,true,x,y);
+            b_C=bcHelper2(true,true,true,true,true,true,true,true,x,y);
         }else{
             if(x==0){//row 0
                 if(y==0){//col 0
                     //checking right, down, right down
-                    b_C+=bcHelper2(false,true,false,true,false,false,true,false,x,y);
+                    b_C=bcHelper2(false,true,false,true,false,false,true,false,x,y);
                 }
                 else if (y==7){
                     //checking left, down, left down
-                    b_C+=bcHelper2(true,false,false,true,false,false,false,true,x,y);
+                    b_C=bcHelper2(true,false,false,true,false,false,false,true,x,y);
                 }
                 else{
                     //checking left, left down, down, right down, right
-                    b_C+=bcHelper2(true,true,false,true,false,false,true,true,x,y);
+                    b_C=bcHelper2(true,true,false,true,false,false,true,true,x,y);
                 }
             }
             else if (x==7){//row 0
                 if(y==0){//col 0
                     //checking up, right up, right
-                    b_C+=bcHelper2(false,true,true,false,false,true,false,false,x,y);
+                    b_C=bcHelper2(false,true,true,false,false,true,false,false,x,y);
                 } else if (y==7) {//col 7
                     //checking left, left up, up
-                    b_C+=bcHelper2(true,false,true,false,true,false,false,false,x,y);
+                    b_C=bcHelper2(true,false,true,false,true,false,false,false,x,y);
 
                 }else {
                     //checking left, left up, up, right up, right
-                    b_C+=bcHelper2(true,true,true,false,true,true,false,false,x,y);
+                    b_C=bcHelper2(true,true,true,false,true,true,false,false,x,y);
                 }
             }else{// when 7<x<0 but y = 0 or 7
                 if(y==0){
                     //checking up, right up, right, right down, down
-                    b_C+=bcHelper2(false,true,true,true,false,true,true,false,x,y);
+                    b_C=bcHelper2(false,true,true,true,false,true,true,false,x,y);
                 }else {//y=7
                     //checking up, left up, left, left down, down
-                    b_C+=bcHelper2(true,false,true,true,true,false,false,true,x,y);
+                    b_C=bcHelper2(true,false,true,true,true,false,false,true,x,y);
                 }
             }
         }
