@@ -8,7 +8,7 @@ import java.util.HashSet;
 public class GameLogic implements PlayableLogic {
 
 
-    private Disc[][] board;  // Represents the game board
+    public Disc[][] board;  // Represents the game board
     private boolean[][] neighbor;
     private Player player1;
     private Player player2;
@@ -16,19 +16,17 @@ public class GameLogic implements PlayableLogic {
     private Disc d;
     public static boolean firstPlayerTurn = true;
     public static ArrayList<Position> flipper=new ArrayList<>();
+    public static ArrayList<Position> tmpflipper=new ArrayList<>();
     public Stack <Move> move_st;
     public static boolean reset;
     public ArrayList <Position> allValid = new ArrayList<>();
+    public Stack<Disc[][]> boardSt;
 
 
     public GameLogic(){
         this.board =new Disc[8][8];
         this.neighbor=new boolean[8][8];
-
-        if(isFirstPlayerTurn()){
-            curent=player1;
-        }
-        else curent=player2;
+        this.boardSt=new Stack<>();
 
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
@@ -50,6 +48,7 @@ public class GameLogic implements PlayableLogic {
     @Override
     public boolean locate_disc(Position a, Disc disc) {
         flipper.clear();
+        tmpflipper.clear();
         int c=countFlips(a);
         if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset) ) {//check if the position available
             System.out.println("this move is invalid");
@@ -66,9 +65,15 @@ public class GameLogic implements PlayableLogic {
 //        }
 
         Move m = new Move(disc);
-        m.MakeMove(disc,board,a);
-        firstPlayerTurn=!firstPlayerTurn;
+        if(m.MakeMove(disc,board,a)) {
+            for (int i = 0; i < flipper.size(); i++) {
 
+                flip(GameLogic.flipper.get(i));
+            }
+        }
+        boardSt.add(board);
+
+        firstPlayerTurn=!firstPlayerTurn;
         if(isFirstPlayerTurn()){
             curent=player1;
             for (int i=0; i<flipper.size(); i++){
@@ -89,6 +94,14 @@ public class GameLogic implements PlayableLogic {
       return true;
 
     }
+    public  boolean flip(Position p){
+        if (board[p.row()][p.col()].getType().equals("⭕")){
+            return true;
+        }
+        board[p.row()][p.col()].setOwner(curent);
+
+        return true;
+    }
 
 
 
@@ -107,10 +120,11 @@ public class GameLogic implements PlayableLogic {
     @Override
     public  List<Position> ValidMoves() {
         List <Position> my_L = new ArrayList<>();
+        flipper.clear();
+        tmpflipper.clear();
 
 
-        //for (int i=0; i< 8; i++){
-           // for (int j=0; j<8;j++){
+
         for (int i=0;i<allValid.size();i++) {
             int x= allValid.get(i).row();
             int y=allValid.get(i).col();
@@ -119,85 +133,76 @@ public class GameLogic implements PlayableLogic {
             if(neighbor[x][y] && board[x][y]==null && countFlips(p)>0) {
                 my_L.add(p);
             }
-                // System.out.println(my_L.getFirst().row +" "+ my_L.getFirst().col);
-          //  }
-        }
-          //  }
 
-      //  }
+        }
+
+
+
 
 
         return my_L;
     }
 
-    private int countHelper(boolean left, boolean right, boolean up, boolean down, boolean leftUp, boolean rightUp, boolean rightDown, boolean leftDown, Position p){
-        int x=p.row();
-        int y=p.col();
+      private int countHelper(int [][] a, Position p){
+          flipper.clear();
         int count=0, tmp_count=0;
+        for (int i=0 ; i<8 ;i++) {
+            int x = p.row() + a[i][0], y = p.col() + a[i][1];
+            if(x!=(-1) & x!=8 & y!=(-1)& y!=8) {
+                tmp_count=0;
+                tmpflipper.clear();
+                while (isInBounds(p) & board[x][y] != null) {
+
+                        if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕")) {
+                            if (avoidDup(new Position(x,y))){
+                                tmp_count++;
+                                tmpflipper.add(new Position(x,y));
+                            }
 
 
-        while ((x<=7) & (x>=0) & (y<=7) & (y>=0)) {
-            if (left){
-                y--;
-            } else if (right) {
-                y++;
-            } else if(up){
-                x--;
-            } else if(down){
-                x++;
-            } else if(leftUp){
-                x--;
-                y--;
-            } else if(rightUp){
-                x--;
-                y++;
-            } else if(rightDown){
-                x++;
-                y++;
-            } else if(leftDown){
-                x++;
-                y--;
+                        }
+                        if (board[x][y].getType().equals("💣") && (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)) {
+                            tmpflipper.add(new Position(x,y));//
+                            //addFlipper(x, y);
+                            tmp_count += bombCounter(x, y);
+                        }
+                        if (board[x][y].getOwner() == curent & tmp_count>0) {
+
+                            copyFlipper();
+                            count+=tmp_count;
+                            break;
+                        }else if(board[x][y].getOwner()==curent){
+                            tmpflipper.clear();
+                            break;
+                        }
+                        x += a[i][0];
+                        y += a[i][1];
+                        if (isInBounds(new Position(x, y))) {
+                            if (board[x][y] == null) {
+                                tmpflipper.clear();
+                                //count += tmp_count;
+                                break;
+                            }
+                        }
+                        else {
+                            tmp_count=0;
+                            tmpflipper.clear();
+                            break;
+                        }
+                }
             }
-            if (y==8 || y==(-1) || x==8 || x ==(-1)){ //if the while loop reached to that spot the last dist belong to the opponent and there is no flips
-
-                count=0;
-                break;
-            }
-
-            if (board[x][y] == null) {  //if there is a null spot we need to stop and delete the last count
-
-                        count=0;
-                break;
-            }
-            else if (board[x][y].getType().equals("💣")&&(board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){
-                count += bombCounter(x,y);
-            }
-
-            if (board[x][y].getType().equals("⭕")){
-                count--;
-            }
-            //if(board[p.row()][p.col()] != null) {
-
-            //}
-            if ((board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)){ //checking if that this is the opponent disc
-
-                    count++;
-
-
-            }else if (count==0){
-                break;
-            }
-            else {
-                //this spot means that we count few position and we can add them to fliiper, and update tmp_counter
-               // tmp_count=count;
-                return count;
-            }
-
 
 
         }
+
+
         return count;
     }
+   private void copyFlipper(){
+        for (int i=0; i<tmpflipper.size();i++){
+          addFlipper(tmpflipper.get(i));
+        }
+   }
 
 
     /**
@@ -208,44 +213,11 @@ public class GameLogic implements PlayableLogic {
     @Override
     public int countFlips(Position a) {
         int count;
-      //  if (!reset){
-            int co_L= countHelper(true,false,false,false,false,false,false,false,a);
-            int co_R= countHelper(false,true,false,false,false,false,false,false,a);
-            int co_U= countHelper(false,false,true,false,false,false,false,false,a);
-            int co_D= countHelper(false,false,false,true,false,false,false,false,a);
-            int co_LU= countHelper(false,false,false,false,true,false,false,false,a);
-            int co_RU= countHelper(false,false,false,false,false,true,false,false,a);
-            int co_RD= countHelper(false,false,false,false,false,false,true,false,a);
-            int co_LD= countHelper(false,false,false,false,false,false,false,true,a);
-            count=co_L+co_R+co_U+co_D+co_LU+co_RU+co_RD+co_LD;
-            //System.out.println(count);
-      //  }
+        int[][] array = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 
-        if (co_L>0){
-            to_Flip(co_L,"left",a);
-        }
-        if (co_R>0){
-            to_Flip(co_R,"right",a);
-        }
-        if (co_U>0){
-            to_Flip(co_U,"up",a);
-        }
-        if (co_D>0){
-            to_Flip(co_D,"down",a);
-        }
-        if (co_LU>0){
-            to_Flip(co_LU,"left_up",a);
-        }
-        if (co_RU>0){
-            to_Flip(co_RU,"right_up",a);
-        }
-        if (co_RD>0){
-            to_Flip(co_RD,"right_down",a);
-        }
-        if (co_LD>0){
-            to_Flip(co_LD,"left_down",a);
-        }
-        // in this point i have number of flipps for each side
+
+        Position p = new Position(a.row(),a.col());
+        count=countHelper(array,p);
 
         return count;
     }
@@ -300,6 +272,8 @@ public class GameLogic implements PlayableLogic {
                System.out.println("Player 2 wins with: " + discs_1 + " discs! Player 1 had: " + discs_2 + " discs." );
                player2.addWin();
            }
+
+
            return true;
        }
 
@@ -328,14 +302,77 @@ public class GameLogic implements PlayableLogic {
             }
         }
 
-
-
     }
 
     @Override
     public void undoLastMove() {
+        boardSt.pop();
 
     }
+    private boolean avoidDup(Position p){
+        int x=p.row(),y=p.col();
+        for(int j=0; j<tmpflipper.size();j++){
+            if(tmpflipper.get(j).col()==y && tmpflipper.get(j).row()==x){
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+
+    private static boolean addFlipper(Position p){
+        int x =p.row();
+        int y= p.col();
+        for (int i=0; i<flipper.size();i++){
+            if (flipper.get(i).row()==x &&flipper.get(i).col()==y){
+                return false;
+            }
+        }
+            flipper.add(p);
+        return true;
+    }
+    private boolean isInBounds(Position p){
+        int x = p.row(), y = p.col();
+        if(x<8 & x>=0 & y<8 & y>=0){
+            return true;
+        }
+        else return false;
+    }
+
+    private int bcHelper(int [][] a, Position p){
+        int b_C=0;
+        for (int i=0 ; i<8 ;i++){
+            int x=p.row() + a[i][0], y= p.col()+a[i][1];
+
+            if (board[x][y]!=null & isInBounds(p)) {
+                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕")) {
+                 if(avoidDup(new Position(x,y))) {
+                       b_C++;
+                       tmpflipper.add(new Position(x, y));
+                    }
+
+
+                }
+            }
+
+
+        }
+
+        return b_C;
+    }
+
+    public int bombCounter(int x, int y) {
+        int b_C = 0;
+        int[][] array =  {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+
+
+            Position p = new Position(x,y);
+            b_C=bcHelper(array,p);
+
+        return b_C;
+    }
+
 
     private  void neighbor_Update(Position a){
         int r=a.row, c=a.col;
@@ -411,179 +448,5 @@ public class GameLogic implements PlayableLogic {
 
         }
     }
-
-    public static void to_Flip(int co , String side, Position p){
-        int x = p.row();
-        int y = p.col();
-        if(side.equals("left")){
-            for (int i=0; i<co;i++){
-                 y= y-1;
-                addFlipper(x,y);            }
-        } else if (side.equals("right")) {
-            for (int i=0; i<co;i++){
-                y= y+1;
-                addFlipper(x,y);            }
-        }
-        else if (side.equals("up")) {
-            for (int i=0; i<co;i++){
-                x=x-1;
-                addFlipper(x,y);            }
-        }
-        else if (side.equals("down")) {
-            for (int i=0; i<co;i++){
-                x=x+1;
-                addFlipper(x,y);            }
-        }
-        else if (side.equals("up")) {
-            for (int i=0; i<co;i++){
-                x=x-1;
-                addFlipper(x,y);            }
-        }
-        else if (side.equals("left_up")) {
-            for (int i=0; i<co;i++){
-                x=x-1;
-                y=y-1;
-                addFlipper(x,y);            }
-        }
-        else if (side.equals("right_up")) {
-            for (int i=0; i<co;i++){
-                x=x-1;
-                y=y+1;
-                addFlipper(x,y);
-            }
-        }
-        else if (side.equals("right_down")) {
-            for (int i=0; i<co;i++){
-                x=x+1;
-                y=y+1;
-                addFlipper(x,y);
-            }
-        }
-        else if (side.equals("left_down")) {
-            for (int i=0; i<co;i++){
-                x=x+1;
-                y=y-1;
-                addFlipper(x,y);
-            }
-        }
-    }
-
-    private static void addFlipper(int x, int y){
-        Position p =new Position(x,y);
-        if (!flipper.contains(p)) {
-            flipper.add(p);
-        }
-    }
-    private int bcHelper(int x, int y){
-     //   int x = p.row(), y = p.col();
-        int b_C=0;
-        if (board[x][y]!=null) {
-            if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕")) {
-                b_C++;
-                addFlipper(x,y);
-            }
-        }
-        return b_C;
-    }
-
-    public int bombCounter(int x, int y) {
-        int b_C = 0;
-        //int x = p.row(), y = p.col();
-
-        //b_C+=bcHelper(b_C,x,y);
-
-        if ((x < 7) & (x > 0) & (y < 7) & (y > 0)) {
-            //checking all directions
-            b_C=bcHelper2(true,true,true,true,true,true,true,true,x,y);
-        }else{
-            if(x==0){//row 0
-                if(y==0){//col 0
-                    //checking right, down, right down
-                    b_C=bcHelper2(false,true,false,true,false,false,true,false,x,y);
-                }
-                else if (y==7){
-                    //checking left, down, left down
-                    b_C=bcHelper2(true,false,false,true,false,false,false,true,x,y);
-                }
-                else{
-                    //checking left, left down, down, right down, right
-                    b_C=bcHelper2(true,true,false,true,false,false,true,true,x,y);
-                }
-            }
-            else if (x==7){//row 0
-                if(y==0){//col 0
-                    //checking up, right up, right
-                    b_C=bcHelper2(false,true,true,false,false,true,false,false,x,y);
-                } else if (y==7) {//col 7
-                    //checking left, left up, up
-                    b_C=bcHelper2(true,false,true,false,true,false,false,false,x,y);
-
-                }else {
-                    //checking left, left up, up, right up, right
-                    b_C=bcHelper2(true,true,true,false,true,true,false,false,x,y);
-                }
-            }else{// when 7<x<0 but y = 0 or 7
-                if(y==0){
-                    //checking up, right up, right, right down, down
-                    b_C=bcHelper2(false,true,true,true,false,true,true,false,x,y);
-                }else {//y=7
-                    //checking up, left up, left, left down, down
-                    b_C=bcHelper2(true,false,true,true,true,false,false,true,x,y);
-                }
-            }
-        }
-        return b_C;
-    }
-
-
-    private int bcHelper2 (boolean left, boolean right, boolean up, boolean down, boolean leftUp, boolean rightUp, boolean rightDown, boolean leftDown, int x, int y){
-        int counter=0;
-        if ((x < 7) & (x > 0) & (y < 7) & (y > 0)) {
-            if (left) {
-                y--;
-                counter+=bcHelper(x,y);
-                y++;
-            }  if (right) {
-                y++;
-                counter+=bcHelper(x,y);
-                y--;
-            }  if (up) {
-                x--;
-                counter+=bcHelper(x,y);
-                x++;
-            } if (down) {
-                x++;
-                counter+=bcHelper(x,y);
-                x--;
-            } if (leftUp) {
-                x--;
-                y--;
-                counter+=bcHelper(x,y);
-                x++;
-                y++;
-            } if (rightUp) {
-                x--;
-                y++;
-                counter+=bcHelper(x,y);
-                x++;
-                y--;
-            } if (rightDown) {
-                x++;
-                y++;
-                counter+=bcHelper(x,y);
-                x--;
-                y--;
-            } if (leftDown) {
-                x++;
-                y--;
-                counter+=bcHelper(x,y);
-                x--;
-                y++;
-            }
-        }
-        return counter;
-    }
-
-
 
 }

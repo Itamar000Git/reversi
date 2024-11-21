@@ -38,20 +38,10 @@ public class Move {
             System.out.println("Player 2 placed a " + d.getType()+ " in: (" + p.row() + " , " + p.col() + ")");
         }
 
-        for (int i=0; i<GameLogic.flipper.size(); i++){
-
-            flip(GameLogic.flipper.get(i),bo);
-        }
-        return true;
-    }
-
-    public  boolean flip(Position p,Disc[][] bo){
-        if (bo[p.row()][p.col()].getType().equals("⭕")){
-            return true;
-        }
-        bo[p.row()][p.col()].setOwner(cur);
 
         return true;
     }
+
+
 
 }
