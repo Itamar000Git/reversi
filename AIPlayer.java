@@ -1,5 +1,4 @@
 import java.util.*;
-
 /**
  * Represents an AI player in the game. The logic for making a move will be based
  * on AI algorithms such as minimax or heuristic-based decision-making.

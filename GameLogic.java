@@ -129,7 +129,6 @@ public class GameLogic implements PlayableLogic {
             int x= allValid.get(i).row();
             int y=allValid.get(i).col();
             Position p = new Position(x,y);
-           // if (neighbor[i][j] && board[i][j] == null && countFlips(p) > 0) {
             if(neighbor[x][y] && board[x][y]==null && countFlips(p)>0) {
                 my_L.add(p);
             }
@@ -158,7 +157,6 @@ public class GameLogic implements PlayableLogic {
                         }
                         if (board[x][y].getType().equals("💣") && (board[x][y].getOwner().isPlayerOne != curent.isPlayerOne)) {
                             tmpflipper.add(new Position(x,y));//
-                            //addFlipper(x, y);
                             tmp_count += bombCounter(x, y);
                         }
                         if (board[x][y].getOwner() == curent & tmp_count>0) {
@@ -175,7 +173,6 @@ public class GameLogic implements PlayableLogic {
                         if (isInBounds(new Position(x, y))) {
                             if (board[x][y] == null) {
                                 tmpflipper.clear();
-                                //count += tmp_count;
                                 break;
                             }
                         }
@@ -277,7 +274,7 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void reset() {
-       // reset=true;
+
         board =new Disc[8][8];
         board[3][3] = new SimpleDisc(player1);
         board[4][4] = new SimpleDisc(player1);
@@ -342,14 +339,10 @@ public class GameLogic implements PlayableLogic {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
                         board[i][j] = boardSt.peek()[i][j]; //reload the last move
-//                    if(board[i][j]!=null) {
-//                        if (board[i][j].lastOwner("peek") != null) {
-//                            board[i][j].setOwner(board[i][j].lastOwner("pop"));
-//                        }
-//                    }
                 }
             }
                 Move m= move_st.pop();
+                System.out.println("Undo: removing "+m.disc().getType()+" from: ("+m.position().row()+" , "+m.position().col()+")");
                 m.undo(board);
 
                 firstPlayerTurn=!firstPlayerTurn;

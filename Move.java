@@ -65,11 +65,10 @@ public class Move {
         for (int i=0;i<posArr.size();i++){
             int x=posArr.get(i).row();
             int y=posArr.get(i).col();
+            System.out.println("Undo: flipping back "+board[x][y].getType()+" in ("+x+" , "+y+")");
             board[x][y].setOwner(board[x][y].lastOwner("pop"));
         }
-//        if (!move_st.empty()){
-//            MakeMove(move_st.peek().disc,board,move_st.peek().position);
-//        }
+        System.out.println("");
         return board;
     }
 
