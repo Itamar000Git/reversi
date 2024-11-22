@@ -1,8 +1,20 @@
+import java.util.Stack;
+
 public class UnflippableDisc implements Disc {
     private  Player curentplayer;
+    private Stack<Player> owners=new Stack<>();
 
     public UnflippableDisc(Player cur) {
-        this.curentplayer=cur;
+        if (cur.getNumber_of_unflippedable()==0){
+            System.out.println("Number of unflippedable discs is 0 , Please try a different disc");
+            throw new RuntimeException("number of unflippable is 0");
+        }
+        else {
+            this.curentplayer=cur;
+            owners.add(cur);
+        }
+
+
     }
 
     @Override
@@ -18,5 +30,9 @@ public class UnflippableDisc implements Disc {
     @Override
     public String getType() {
         return "⭕";
+    }
+    @Override
+    public Player lastOwner(){
+        return owners.pop();
     }
 }

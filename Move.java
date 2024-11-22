@@ -22,6 +22,7 @@ public class Move {
         if(d.getType().equals("⭕")){
             bo[p.row][p.col]=new UnflippableDisc(cur);
             cur.reduce_unflippedable();
+            System.out.println("Number of unflippedable is: " +cur.number_of_unflippedable);
         } else if (d.getType().equals("💣")) {
                 bo[p.row][p.col]=new BombDisc(cur);
                 cur.reduce_bomb();

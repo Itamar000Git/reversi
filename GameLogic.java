@@ -49,20 +49,13 @@ public class GameLogic implements PlayableLogic {
     public boolean locate_disc(Position a, Disc disc) {
         flipper.clear();
         tmpflipper.clear();
+        updateStack();
         int c=countFlips(a);
         if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset) ) {//check if the position available
             System.out.println("this move is invalid");
             return false;
         }
 
-//        if (curent.getNumber_of_bombs()==0){
-//            System.out.println("number of bombs is 0");
-//            return false;
-//        }
-//        if (curent.getNumber_of_unflippedable()==0){
-//            System.out.println("number of unflippedable is 0");
-//            return false;
-//        }
 
         Move m = new Move(disc);
         if(m.MakeMove(disc,board,a)) {
@@ -71,7 +64,7 @@ public class GameLogic implements PlayableLogic {
                 flip(GameLogic.flipper.get(i));
             }
         }
-        boardSt.add(board);
+
 
         firstPlayerTurn=!firstPlayerTurn;
         if(isFirstPlayerTurn()){
@@ -105,6 +98,8 @@ public class GameLogic implements PlayableLogic {
 
 
 
+
+
     @Override
     public Disc getDiscAtPosition(Position position) {
 
@@ -135,11 +130,6 @@ public class GameLogic implements PlayableLogic {
             }
 
         }
-
-
-
-
-
         return my_L;
     }
 
@@ -288,6 +278,7 @@ public class GameLogic implements PlayableLogic {
         board[4][4] = new SimpleDisc(player2);
         board[3][4] =new  SimpleDisc(player1);
         board[4][3] =new  SimpleDisc(player1);
+        updateStack();
         curent=player1;
         firstPlayerTurn=true;
 
@@ -303,16 +294,54 @@ public class GameLogic implements PlayableLogic {
         }
 
     }
+    private void updateStack(){
+        boardSt.add(new Disc[8][8]);
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+            boardSt.getLast()[i][j]= board[i][j];
+
+            }
+        }
+
+
+    }
 
     @Override
     public void undoLastMove() {
-        boardSt.pop();
+        if(!boardSt.empty()) {
+            boardSt.pop();//take out this move
+            if (!boardSt.empty()) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    board[i][j] = boardSt.peek()[i][j]; //reload the last move
+                    if(board[i][j]!=null) {
+                        if (board[i][j].lastOwner() != null) {
+                            board[i][j].setOwner(board[i][j].lastOwner());
+                        }
+                    }
+                }
+            }
+
+        }
+            else {
+                System.out.println("This is the first move");
+               // reset();
+            }
+        }
+
 
     }
     private boolean avoidDup(Position p){
         int x=p.row(),y=p.col();
         for(int j=0; j<tmpflipper.size();j++){
             if(tmpflipper.get(j).col()==y && tmpflipper.get(j).row()==x){
+                return false;
+            }
+        }
+
+        for (int i=0;i<flipper.size();i++){
+            if(flipper.get(i).col()==y && flipper.get(i).row()==x){
                 return false;
             }
         }
@@ -342,19 +371,28 @@ public class GameLogic implements PlayableLogic {
 
     private int bcHelper(int [][] a, Position p){
         int b_C=0;
-        for (int i=0 ; i<8 ;i++){
-            int x=p.row() + a[i][0], y= p.col()+a[i][1];
+        p.setBoom(true); //say that the bomb in this position bomb in this turn
+        for (int i=0 ; i<8 ;i++) {
+            int x = p.row() + a[i][0], y = p.col() + a[i][1];
+            Position p1 = new Position(x, y);
 
-            if (board[x][y]!=null & isInBounds(p)) {
-                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕")) {
-                 if(avoidDup(new Position(x,y))) {
-                       b_C++;
-                       tmpflipper.add(new Position(x, y));
-                    }
+            if ( isInBounds(p1)) {
+
+
+            if (board[x][y] != null ) {
+                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1) ) {
+                        if (board[x][y].getType().equals("💣")) {
+                           // System.out.println("We have another bomb in line");
+                            b_C+=bombCounter(x,y);
+                        }
+                        b_C++;
+                        tmpflipper.add(p1);
+
 
 
                 }
             }
+        }
 
 
         }

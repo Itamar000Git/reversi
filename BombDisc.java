@@ -1,9 +1,17 @@
+import java.util.Stack;
+
 public class BombDisc implements Disc {
     private Player current;
+    private Stack<Player> owners=new Stack<>();
 
     public BombDisc(Player cur){
-
-        this.current= cur;
+        if (cur.getNumber_of_bombs()==0){
+            System.out.println("Number of bomb discs is 0 , Please try a different disc");
+            throw new RuntimeException("number of bombs is 0");
+        }else {
+            this.current = cur;
+            owners.add(cur);
+        }
     }
 
     @Override
@@ -19,5 +27,9 @@ public class BombDisc implements Disc {
     @Override
     public String getType() {
         return  "💣";
+    }
+    @Override
+    public Player lastOwner(){
+        return owners.pop();
     }
 }

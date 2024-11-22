@@ -1,9 +1,12 @@
+import java.util.Stack;
 
 public class SimpleDisc implements Disc {
     private Player curentplayer;
+    private  Stack<Player> owners=new Stack<>();
 
 public SimpleDisc(Player cur){
     this.curentplayer = cur;
+    owners.add(cur);
 }
 
     @Override
@@ -19,5 +22,10 @@ public SimpleDisc(Player cur){
     @Override
     public String getType() {
         return "⬤";
+    }
+
+    @Override
+    public  Player lastOwner(){
+    return owners.pop();
     }
 }
