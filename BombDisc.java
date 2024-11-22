@@ -29,7 +29,20 @@ public class BombDisc implements Disc {
         return  "💣";
     }
     @Override
-    public Player lastOwner(){
-        return owners.pop();
+    public Player lastOwner(String peekORpop){
+        if(owners.size()<2){
+            return null;
+        }
+        if(peekORpop.equals("peek")){
+            return owners.peek();
+        }else{
+            owners.pop();
+            return owners.peek();
+        }
+    }
+    @Override
+    public void addOwner(Player p){
+        owners.add(p);
+
     }
 }

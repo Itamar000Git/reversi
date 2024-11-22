@@ -7,6 +7,8 @@ public class SimpleDisc implements Disc {
 public SimpleDisc(Player cur){
     this.curentplayer = cur;
     owners.add(cur);
+//    owners.add(new HumanPlayer(cur.isPlayerOne()));
+//    owners.add(new HumanPlayer(curentplayer.isPlayerOne()));
 }
 
     @Override
@@ -25,7 +27,22 @@ public SimpleDisc(Player cur){
     }
 
     @Override
-    public  Player lastOwner(){
-    return owners.pop();
+    public  Player lastOwner(String peekORpop){
+    if(owners.size()<2){
+        return null;
     }
+    if(peekORpop.equals("peek")){
+        return owners.peek();
+    }else{
+        owners.pop();
+        return owners.peek();
+    }
+
+    }
+    @Override
+   public void addOwner(Player p){
+    owners.add(p);
+
+    }
+
 }

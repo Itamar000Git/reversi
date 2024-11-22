@@ -1,8 +1,12 @@
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class Move {
     private Disc disc;
     private Position position;
     private Player cur;
+
+    public ArrayList<Position> posArr=new ArrayList<>();
 
     public Position position(){
         return position;
@@ -12,8 +16,13 @@ public class Move {
         return disc;
     }
 
-    public Move(Disc disc) {
+    public Move(Disc disc, Position p) {
         this.disc = disc;
+        this.position=p;
+
+    }
+    public Move(){
+
     }
 
 
@@ -41,6 +50,27 @@ public class Move {
 
 
         return true;
+    }
+
+   // public void addToStack(Move m){
+   //     move_st.add(m);
+   // }
+    public void addToPos(ArrayList<Position> p){
+        posArr.addAll(p);
+
+    }
+
+    public Disc[][] undo(Disc [][]board){
+
+        for (int i=0;i<posArr.size();i++){
+            int x=posArr.get(i).row();
+            int y=posArr.get(i).col();
+            board[x][y].setOwner(board[x][y].lastOwner("pop"));
+        }
+//        if (!move_st.empty()){
+//            MakeMove(move_st.peek().disc,board,move_st.peek().position);
+//        }
+        return board;
     }
 
 

@@ -25,7 +25,8 @@ public interface Disc {
      * respectively.
      */
     String getType();
-    Player lastOwner();
+    Player lastOwner(String peekORpop);
+    void addOwner(Player p);
 
 
 }

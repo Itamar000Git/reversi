@@ -17,10 +17,11 @@ public class GameLogic implements PlayableLogic {
     public static boolean firstPlayerTurn = true;
     public static ArrayList<Position> flipper=new ArrayList<>();
     public static ArrayList<Position> tmpflipper=new ArrayList<>();
-    public Stack <Move> move_st;
+
     public static boolean reset;
     public ArrayList <Position> allValid = new ArrayList<>();
     public Stack<Disc[][]> boardSt;
+    public Stack<Move> move_st= new Stack<>();
 
 
     public GameLogic(){
@@ -57,12 +58,14 @@ public class GameLogic implements PlayableLogic {
         }
 
 
-        Move m = new Move(disc);
+        Move m = new Move(disc,a);
+       move_st.add(m);
         if(m.MakeMove(disc,board,a)) {
             for (int i = 0; i < flipper.size(); i++) {
 
                 flip(GameLogic.flipper.get(i));
             }
+            m.addToPos(flipper);
         }
 
 
@@ -81,6 +84,7 @@ public class GameLogic implements PlayableLogic {
                 System.out.println("Player 2 flipped the: "+disc.getType()+" in: ("+flipper.get(i).row+" , "+flipper.get(i).col+")" );
             }
         }
+        updateStack();
         neighbor_Update(a);
         System.out.println("");
 
@@ -92,6 +96,7 @@ public class GameLogic implements PlayableLogic {
             return true;
         }
         board[p.row()][p.col()].setOwner(curent);
+        board[p.row()][p.col()].addOwner(curent);
 
         return true;
     }
@@ -274,10 +279,10 @@ public class GameLogic implements PlayableLogic {
     public void reset() {
        // reset=true;
         board =new Disc[8][8];
-        board[3][3] = new SimpleDisc(player2);
-        board[4][4] = new SimpleDisc(player2);
-        board[3][4] =new  SimpleDisc(player1);
-        board[4][3] =new  SimpleDisc(player1);
+        board[3][3] = new SimpleDisc(player1);
+        board[4][4] = new SimpleDisc(player1);
+        board[3][4] =new  SimpleDisc(player2);
+        board[4][3] =new  SimpleDisc(player2);
         updateStack();
         curent=player1;
         firstPlayerTurn=true;
@@ -294,38 +299,74 @@ public class GameLogic implements PlayableLogic {
         }
 
     }
-    private void updateStack(){
-        boardSt.add(new Disc[8][8]);
 
+    private boolean updateHelper(Disc[][] A,Disc[][] B){
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-            boardSt.getLast()[i][j]= board[i][j];
-
+                if (A[i][j]!=B[i][j]){
+                    return false;
+                }
+            }
+            }
+        return true;
+    }
+    private void updateStack(){
+        if(boardSt.empty()){
+            boardSt.add(new Disc[8][8]);
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    boardSt.getLast()[i][j]= board[i][j];
+                }
             }
         }
+       else if(!updateHelper(boardSt.getLast(),board)) {
+            boardSt.add(new Disc[8][8]);
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    boardSt.getLast()[i][j]= board[i][j];
+                }
+            }
 
-
+        }
     }
 
     @Override
     public void undoLastMove() {
+
+        System.out.println("Undoing last move:");
+
+       // updateStack();
         if(!boardSt.empty()) {
             boardSt.pop();//take out this move
             if (!boardSt.empty()) {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    board[i][j] = boardSt.peek()[i][j]; //reload the last move
-                    if(board[i][j]!=null) {
-                        if (board[i][j].lastOwner() != null) {
-                            board[i][j].setOwner(board[i][j].lastOwner());
-                        }
-                    }
+                        board[i][j] = boardSt.peek()[i][j]; //reload the last move
+//                    if(board[i][j]!=null) {
+//                        if (board[i][j].lastOwner("peek") != null) {
+//                            board[i][j].setOwner(board[i][j].lastOwner("pop"));
+//                        }
+//                    }
                 }
             }
+                Move m= move_st.pop();
+                m.undo(board);
+
+                firstPlayerTurn=!firstPlayerTurn;
+                if(isFirstPlayerTurn()) {
+                    curent = player1;
+                }
+                else{
+                    curent=player2;
+                }
+
+             //   ValidMoves();
 
         }
             else {
-                System.out.println("This is the first move");
+                System.out.println("\tNo previous move available to undo.");
+
+
                // reset();
             }
         }
