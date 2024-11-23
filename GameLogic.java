@@ -88,7 +88,7 @@ public class GameLogic implements PlayableLogic {
         }
 
 
-        board[a.row()][a.col()].setBoom(false);
+       // board[a.row()][a.col()].setBoom(false);
 
 
         firstPlayerTurn=!firstPlayerTurn;
@@ -474,7 +474,7 @@ public class GameLogic implements PlayableLogic {
      * @param p
      * @return
      */
-    private boolean isInBounds(Position p){
+    public static boolean isInBounds(Position p){
         int x = p.row(), y = p.col();
         if(x<8 & x>=0 & y<8 & y>=0){
             return true;
@@ -499,11 +499,13 @@ public class GameLogic implements PlayableLogic {
 
 
             if (board[x][y] != null ) {
-                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1)&!board[x][y].getBoom() ) {
-                        if (board[x][y].getType().equals("💣")) {
+                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1)&!board[x][y].getBoom()) {
+                   //
+                    if (board[x][y].getType().equals("💣")) {
 
                            // System.out.println("We have another bomb in line");
                             b_C+=bombCounter(x,y);
+                            //board[x][y].setBoom(true);
                         }
                         b_C++;
                         tmpflipper.add(p1);
@@ -534,7 +536,7 @@ public class GameLogic implements PlayableLogic {
             Position p = new Position(x,y);
             board[x][y].setBoom(true);
             b_C=bcHelper(array,p);
-
+            board[x][y].setBoom(false);
 
         return b_C;
     }

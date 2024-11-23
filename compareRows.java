@@ -8,4 +8,5 @@ public class compareRows implements Comparator<Position> {
         else if (p1.row()<p2.row()) {return -1;}
         else  return 0;
     }
+
 }

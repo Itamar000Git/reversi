@@ -5,22 +5,24 @@ import java.util.Random;
 
 public class WinnerAI extends AIPlayer{
     ArrayList <Position> arr = new ArrayList<>();
+    ArrayList<Position> corners_Arr = new ArrayList<>();
     public int move_counter;
     public WinnerAI(boolean isPlayerOne) {
         super(isPlayerOne);
         this.isPlayerOne=isPlayerOne;
-        this.move_counter=10;
+        this.move_counter=12;
     }
 
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
     //take the corners and slide around
     //start with small flips 10 first moves
-    //to be centered around opponent discs
-        Random rand = new Random();
-        int rendomDisc;
+    //to be centered around opponent discs.
+
         compareFlips compFlip = new compareFlips();
-        Comparator<Position> myComp =   compFlip;
+        compareRows rowComp = new compareRows();
+        compareColluns collComp = new compareColluns();
+        Comparator<Position> myComp = compFlip.thenComparing(rowComp).thenComparing(collComp);
         compFlip.game(gameStatus);
 //        compareRows rowComp = new compareRows();
 //        compareColluns collComp = new compareColluns();
@@ -30,20 +32,36 @@ public class WinnerAI extends AIPlayer{
         arr.addAll(gameStatus.ValidMoves());
         arr.sort(myComp);
 
-        Position p =openCorner(gameStatus.ValidMoves()); //check if there is an available corner
-        if (p!=null){
+        Position corner =openCorner(gameStatus.ValidMoves()); //check if there is an available corner
+        Position round_end=roundEnd(gameStatus.ValidMoves());
+
+        if (corner!=null){
+            corners_Arr.add(corner);
             Disc disc = new SimpleDisc(this);
-            Move move = new Move(disc,p);
+            Move move = new Move(disc,corner);
             move_counter--;
             return move;
-        }else if(move_counter>0){
+        } else if (!corners_Arr.isEmpty()) {
+
+                Position p=cornerStrategy();
+
+
+        } else if(move_counter>0){
             Position pos=new Position(arr.getFirst().row(),arr.getFirst().col());
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,pos);
             move_counter--;
             return move;
+        } else if (round_end!=null) {
+            Disc disc;
+            if (this.number_of_unflippedable>0) {
+                disc = new UnflippableDisc(this);
+                Move move = new Move(disc, round_end);
+                move_counter--;
+                return move;
+            }
         }
-            Position greedyPos=new Position(arr.getLast().row(),arr.getLast().col());
+        Position greedyPos=new Position(arr.getLast().row(),arr.getLast().col());
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,greedyPos);
         return move;
@@ -69,5 +87,49 @@ public class WinnerAI extends AIPlayer{
             }
         }
     return null;
+    }
+
+    public Position roundEnd(List <Position> arr){
+        for ( int i=0;i<arr.size();i++){ //in this point we cant ce on the corner
+            int x=arr.get(i).row();
+            int y=arr.get(i).col();
+            if(x==0||x==7||y==0||y==7 ){
+                return arr.get(i);
+            }
+        }
+        return null;
+
+    }
+    public Position cornerStrategy(){
+        int[][] array =  {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
+        for (int i=0; i<corners_Arr.size(); i++){
+            Position p=corners_Arr.get(i);
+            for (int j=0 ; j<8 ;j++) {
+                int x = p.row() + array[j][0], y = p.col() + array[j][1];
+                Position p1 = new Position(x, y);
+
+                if ( GameLogic.isInBounds(p1)) {
+
+
+//                    if (board[x][y] != null ) {
+//                        if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1)&!board[x][y].getBoom()) {
+//                            //
+//                            if (board[x][y].getType().equals("💣")) {
+//
+//                                // System.out.println("We have another bomb in line");
+//                                b_C+=bombCounter(x,y);
+//                                //board[x][y].setBoom(true);
+//                            }
+//                            b_C++;
+//                            tmpflipper.add(p1);
+//
+//
+//
+//                        }
+//                    }
+                }
+            }
+        }
+        return null;
     }
 }
