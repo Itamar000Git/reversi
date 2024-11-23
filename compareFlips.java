@@ -17,5 +17,9 @@ public class compareFlips implements Comparator<Position>{
         else if (c1<c2) {return -1;}
         else return 0;
     }
+    public int co (){
+
+        return 0;
+    }
 
 }
