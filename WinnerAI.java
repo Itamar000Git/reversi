@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class WinnerAI extends AIPlayer{
     ArrayList <Position> arr = new ArrayList<>();
@@ -16,11 +17,18 @@ public class WinnerAI extends AIPlayer{
     //take the corners and slide around
     //start with small flips 10 first moves
     //to be centered around opponent discs
+        Random rand = new Random();
+        int rendomDisc;
         compareFlips compFlip = new compareFlips();
-        Comparator<Position> mainComp =   compFlip;
+        Comparator<Position> myComp =   compFlip;
+        compFlip.game(gameStatus);
+//        compareRows rowComp = new compareRows();
+//        compareColluns collComp = new compareColluns();
+
+
         arr.clear();
         arr.addAll(gameStatus.ValidMoves());
-        arr.sort(mainComp);
+        arr.sort(myComp);
 
         Position p =openCorner(gameStatus.ValidMoves()); //check if there is an available corner
         if (p!=null){
@@ -28,20 +36,16 @@ public class WinnerAI extends AIPlayer{
             Move move = new Move(disc,p);
             move_counter--;
             return move;
-        }
-        if(move_counter>0){
+        }else if(move_counter>0){
             Position pos=new Position(arr.getFirst().row(),arr.getFirst().col());
             Disc disc = new SimpleDisc(this);
-            Move move = new Move(disc,p);
+            Move move = new Move(disc,pos);
             move_counter--;
             return move;
         }
-
-//        Disc disc =
-//        Position pos =(gameStatus.ValidMoves().get());
-//
-//        Move move = new Move(disc,pos);
-
+            Position greedyPos=new Position(arr.getLast().row(),arr.getLast().col());
+            Disc disc = new SimpleDisc(this);
+            Move move = new Move(disc,greedyPos);
         return move;
     }
 

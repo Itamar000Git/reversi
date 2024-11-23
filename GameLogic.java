@@ -20,6 +20,11 @@ public class GameLogic implements PlayableLogic {
     public Stack<Disc[][]> boardSt; //for undo
     public Stack<Move> move_st= new Stack<>(); //for undo
 
+    public int winnerAI_wins_AsP1=0;
+    public int randomAI_wins_AsP2=0;
+
+
+
     /**
      * Initial game board and neighbor arrays.
      * Creat a new stack for Undo moves.
@@ -291,11 +296,17 @@ public class GameLogic implements PlayableLogic {
            }
            if (discs_1>discs_2){
                System.out.println("Player 1 wins with: " + discs_1 + " discs! Player 2 had: " + discs_2 + " discs." );
+
                player1.addWin();
            } else if (discs_2>discs_1) {
-               System.out.println("Player 2 wins with: " + discs_1 + " discs! Player 1 had: " + discs_2 + " discs." );
+               System.out.println("Player 2 wins with: " + discs_2 + " discs! Player 1 had: " + discs_1 + " discs." );
+
                player2.addWin();
            }
+           System.out.println("Total:");
+           System.out.println("\tPlayer1 - RandomAI with: "+player1.wins);
+           System.out.println("\tPlayer2 - WinnerAI with: "+ player2.wins);
+           System.out.println("");
 
 
            return true;
