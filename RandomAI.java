@@ -6,27 +6,29 @@ public class RandomAI extends AIPlayer{
         super(isPlayerOne);
 
         this.isPlayerOne=isPlayerOne;
+        this.reset_bombs_and_unflippedable();
         registerAIPlayerType("RandomAI",RandomAI.class);
+
 
     }
 
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-        this.current=new RandomAI(isPlayerOne);
+       // this=new RandomAI(isPlayerOne);
         Random rand = new Random();
         int rendomDisc;
-        if (current.number_of_bombs>0){
-            if (current.number_of_unflippedable>0){
+        if (this.number_of_bombs>0){
+            if (this.number_of_unflippedable>0){
                  rendomDisc= rand.nextInt(3);
             }
             else {
                  rendomDisc= rand.nextInt(2);
             }
-        } else if (current.number_of_unflippedable>0) {
-             rendomDisc= rand.nextInt(1,3);
+        } else if (this.number_of_unflippedable>0) {
+             rendomDisc= rand.nextInt(2)+1;
         }
         else {
-             rendomDisc= 2;
+             rendomDisc= 1;
         }
 
         int valid = rand.nextInt(gameStatus.ValidMoves().size());
@@ -40,15 +42,15 @@ public class RandomAI extends AIPlayer{
     private Disc chooseDisc(int c){
         Disc d;
         if(c==0){
-                d = new BombDisc(current);
-                current.reduce_bomb();
+                d = new BombDisc(this);
+               // this.reduce_bomb();
 
         } else if (c==1) {
-            d=new SimpleDisc(current);
+            d=new SimpleDisc(this);
         }
         else {
-            d=new UnflippableDisc(current);
-            current.reduce_unflippedable();
+            d=new UnflippableDisc(this);
+           // this.reduce_unflippedable();
         }
         return d;
     }
