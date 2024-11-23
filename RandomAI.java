@@ -6,8 +6,8 @@ public class RandomAI extends AIPlayer{
         super(isPlayerOne);
 
         this.isPlayerOne=isPlayerOne;
-        this.reset_bombs_and_unflippedable();
-        registerAIPlayerType("RandomAI",RandomAI.class);
+        //this.reset_bombs_and_unflippedable();
+        //registerAIPlayerType("RandomAI",RandomAI.class);
 
 
     }

@@ -217,7 +217,6 @@ public class GameLogic implements PlayableLogic {
 
 
 
-
     @Override
     public Player getFirstPlayer() {
 
