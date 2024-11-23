@@ -2,9 +2,11 @@ import java.util.Stack;
 
 public class BombDisc implements Disc {
     private Player current;
+    private boolean boom;
     private Stack<Player> owners=new Stack<>();
 
     public BombDisc(Player cur){
+        this.boom=false;
         if (cur.getNumber_of_bombs()==0){
             System.out.println("Number of bomb discs is 0 , Please try a different disc");
             throw new RuntimeException("number of bombs is 0");
@@ -45,4 +47,13 @@ public class BombDisc implements Disc {
         owners.add(p);
 
     }
+    @Override
+    public boolean getBoom(){
+        return boom;
+    }
+    @Override
+    public void setBoom(boolean b){
+        boom=b;
+    }
+
 }

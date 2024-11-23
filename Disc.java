@@ -27,6 +27,8 @@ public interface Disc {
     String getType();
     Player lastOwner(String peekORpop);
     void addOwner(Player p);
+    boolean getBoom();
+    void setBoom(boolean b);
 
 
 }

@@ -48,4 +48,12 @@ public class UnflippableDisc implements Disc {
         owners.add(p);
 
     }
+    @Override
+    public boolean getBoom(){
+        return false;
+    }
+    @Override
+    public void setBoom(boolean b){
+        return;
+    }
 }

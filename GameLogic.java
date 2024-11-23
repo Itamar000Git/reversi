@@ -87,6 +87,10 @@ public class GameLogic implements PlayableLogic {
             move_st.add(m);
         }
 
+
+        board[a.row()][a.col()].setBoom(false);
+
+
         firstPlayerTurn=!firstPlayerTurn;
         if(isFirstPlayerTurn()){
             curent=player1;
@@ -125,6 +129,7 @@ public class GameLogic implements PlayableLogic {
         }
         board[p.row()][p.col()].setOwner(curent);
         board[p.row()][p.col()].addOwner(curent);
+
 
         return true;
     }
@@ -494,8 +499,9 @@ public class GameLogic implements PlayableLogic {
 
 
             if (board[x][y] != null ) {
-                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1) ) {
+                if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1)&!board[x][y].getBoom() ) {
                         if (board[x][y].getType().equals("💣")) {
+
                            // System.out.println("We have another bomb in line");
                             b_C+=bombCounter(x,y);
                         }
@@ -526,7 +532,9 @@ public class GameLogic implements PlayableLogic {
 
 
             Position p = new Position(x,y);
+            board[x][y].setBoom(true);
             b_C=bcHelper(array,p);
+
 
         return b_C;
     }

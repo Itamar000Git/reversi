@@ -44,5 +44,13 @@ public SimpleDisc(Player cur){
     owners.add(p);
 
     }
+    @Override
+   public boolean getBoom(){
+    return false;
+   }
+    @Override
+    public void setBoom(boolean b){
+    return;
+    }
 
 }
