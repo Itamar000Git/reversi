@@ -9,21 +9,22 @@ public class GameLogic implements PlayableLogic {
 
 
     public Disc[][] board;  // Represents the game board
-    private boolean[][] neighbor;
+    private boolean[][] neighbor; //Represent the possible next moves
     private Player player1;
     private Player player2;
     private Player curent;
-    private Disc d;
     public static boolean firstPlayerTurn = true;
     public static ArrayList<Position> flipper=new ArrayList<>();
     public static ArrayList<Position> tmpflipper=new ArrayList<>();
+    public ArrayList <Position> allValid = new ArrayList<>(); //Represent all valid moves for current player
+    public Stack<Disc[][]> boardSt; //for undo
+    public Stack<Move> move_st= new Stack<>(); //for undo
 
-    public static boolean reset;
-    public ArrayList <Position> allValid = new ArrayList<>();
-    public Stack<Disc[][]> boardSt;
-    public Stack<Move> move_st= new Stack<>();
-
-
+    /**
+     * Initial game board and neighbor arrays.
+     * Creat a new stack for Undo moves.
+     * initialized allValid array list with all options without reset positions.
+     */
     public GameLogic(){
         this.board =new Disc[8][8];
         this.neighbor=new boolean[8][8];
@@ -41,7 +42,20 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     * Check if there is disc on the board
+     * The function locate_disc needs to locate a disc on the board,
+     * The function needs to check if the move is valid, create the move, flip the correct discs, and switch turns.
+
+     1. Locate_disc First make sure that the position we choose to add our disc is valid,
+        "Locate_disc" doing it by checking if the board already has a disc at the same position,
+        also, check if that position is someone's neighbor and make sure that if we added that disc to this position at least one of the opponent discs will flip.
+     2. When we are sure this move is valid we can create a Move object with disc and position,
+        and send it to the "makeMove" function that is located in the Move class.
+     3. After the move has been made we are adding that move to move stack (move_st).
+         At that point, we know which discs need to be flipped (flipper ArrayList that updates in a different function),
+         and we send each position to the "flip" function.
+     4. In that part we are switching turns and printing information on the last move.
+        Update board stack and neighbor array with the new board and new neighbors.
+
      * @param a The position for locating a new disc on the board.
      * @param disc
      * @return
@@ -52,22 +66,21 @@ public class GameLogic implements PlayableLogic {
         tmpflipper.clear();
         updateStack();
         int c=countFlips(a);
-        if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || ((c==0) && !reset) ) {//check if the position available
+        if(board[a.row][a.col] != null || !neighbor[a.row][a.col] || (c==0)  ) {//check if the position available
             System.out.println("this move is invalid");
             return false;
         }
 
-
         Move m = new Move(disc,a);
-       move_st.add(m);
+
         if(m.MakeMove(disc,board,a)) {
             for (int i = 0; i < flipper.size(); i++) {
 
                 flip(GameLogic.flipper.get(i));
             }
             m.addToPos(flipper);
+            move_st.add(m);
         }
-
 
         firstPlayerTurn=!firstPlayerTurn;
         if(isFirstPlayerTurn()){
@@ -91,6 +104,16 @@ public class GameLogic implements PlayableLogic {
       return true;
 
     }
+
+    /**
+     *The "flip" function role is to simply flip the disc located in the given position.
+
+     1. First we make sure that the flip in the given position is not an "Unflippable" disc.
+     2. Then we flip the disc by setting a new owner (the opponent).
+     3. We are also keeping a record of the new owner for undo moves.
+     * @param p
+     * @return
+     */
     public  boolean flip(Position p){
         if (board[p.row()][p.col()].getType().equals("⭕")){
             return true;
@@ -100,30 +123,29 @@ public class GameLogic implements PlayableLogic {
 
         return true;
     }
-
-
-
-
-
     @Override
     public Disc getDiscAtPosition(Position position) {
 
         return board[position.row()][position.col()];
     }
-
     @Override
     public int getBoardSize() {
 
         return board.length;
     }
 
+    /**
+     * The "ValidMoves" function adds to a new list just the valid moves, by checking 3 parameters:
+     1. If that position has a true value in the neighbor array.
+     2. If the board in that position doesn't already have a disc.
+     3. If that position going to flip an opponent's discs, by sending that position to the "countFlips" function.
+     * @return
+     */
     @Override
     public  List<Position> ValidMoves() {
         List <Position> my_L = new ArrayList<>();
         flipper.clear();
         tmpflipper.clear();
-
-
 
         for (int i=0;i<allValid.size();i++) {
             int x= allValid.get(i).row();
@@ -132,11 +154,16 @@ public class GameLogic implements PlayableLogic {
             if(neighbor[x][y] && board[x][y]==null && countFlips(p)>0) {
                 my_L.add(p);
             }
-
         }
         return my_L;
     }
 
+    /**
+     *
+     * @param a
+     * @param p
+     * @return
+     */
       private int countHelper(int [][] a, Position p){
           flipper.clear();
         int count=0, tmp_count=0;
@@ -190,6 +217,10 @@ public class GameLogic implements PlayableLogic {
 
         return count;
     }
+
+    /**
+     *
+     */
    private void copyFlipper(){
         for (int i=0; i<tmpflipper.size();i++){
           addFlipper(tmpflipper.get(i));
@@ -198,20 +229,18 @@ public class GameLogic implements PlayableLogic {
 
 
     /**
+     * The "countFlips" function role is to return the number of flips each position can flip, if a disc will add in that position.
+        1. Creat an array that includes all "directions" in a bord.
+        2. Call the "countHelper" function with the array and a deep copy of the given position.
      * when we here the move is valid
      * @param a
      * @return
      */
     @Override
     public int countFlips(Position a) {
-        int count;
         int[][] array = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
-
-
         Position p = new Position(a.row(),a.col());
-        count=countHelper(array,p);
-
-        return count;
+        return  countHelper(array,p);
     }
 
 
@@ -242,6 +271,10 @@ public class GameLogic implements PlayableLogic {
 
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isGameFinished() {
        if(ValidMoves().isEmpty()){
@@ -271,6 +304,9 @@ public class GameLogic implements PlayableLogic {
         return false;
     }
 
+    /**
+     *
+     */
     @Override
     public void reset() {
 
@@ -296,6 +332,12 @@ public class GameLogic implements PlayableLogic {
 
     }
 
+    /**
+     *
+     * @param A
+     * @param B
+     * @return
+     */
     private boolean updateHelper(Disc[][] A,Disc[][] B){
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -306,6 +348,10 @@ public class GameLogic implements PlayableLogic {
             }
         return true;
     }
+
+    /**
+     *
+     */
     private void updateStack(){
         if(boardSt.empty()){
             boardSt.add(new Disc[8][8]);
@@ -325,7 +371,9 @@ public class GameLogic implements PlayableLogic {
 
         }
     }
-
+/**
+ *
+ */
     @Override
     public void undoLastMove() {
 
@@ -365,6 +413,12 @@ public class GameLogic implements PlayableLogic {
 
 
     }
+
+    /**
+     *
+     * @param p
+     * @return
+     */
     private boolean avoidDup(Position p){
         int x=p.row(),y=p.col();
         for(int j=0; j<tmpflipper.size();j++){
@@ -382,7 +436,11 @@ public class GameLogic implements PlayableLogic {
 
     }
 
-
+    /**
+     *
+     * @param p
+     * @return
+     */
     private static boolean addFlipper(Position p){
         int x =p.row();
         int y= p.col();
@@ -394,6 +452,12 @@ public class GameLogic implements PlayableLogic {
             flipper.add(p);
         return true;
     }
+
+    /**
+     *
+     * @param p
+     * @return
+     */
     private boolean isInBounds(Position p){
         int x = p.row(), y = p.col();
         if(x<8 & x>=0 & y<8 & y>=0){
@@ -402,6 +466,12 @@ public class GameLogic implements PlayableLogic {
         else return false;
     }
 
+    /**
+     *
+     * @param a
+     * @param p
+     * @return
+     */
     private int bcHelper(int [][] a, Position p){
         int b_C=0;
         p.setBoom(true); //say that the bomb in this position bomb in this turn
@@ -433,6 +503,12 @@ public class GameLogic implements PlayableLogic {
         return b_C;
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     public int bombCounter(int x, int y) {
         int b_C = 0;
         int[][] array =  {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
@@ -444,7 +520,10 @@ public class GameLogic implements PlayableLogic {
         return b_C;
     }
 
-
+    /**
+     *
+     * @param a
+     */
     private  void neighbor_Update(Position a){
         int r=a.row, c=a.col;
 

@@ -57,7 +57,6 @@ public class Move {
    // }
     public void addToPos(ArrayList<Position> p){
         posArr.addAll(p);
-
     }
 
     public Disc[][] undo(Disc [][]board){

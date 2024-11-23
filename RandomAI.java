@@ -1,20 +1,13 @@
 import java.util.Random;
 public class RandomAI extends AIPlayer{
-    private  AIPlayer current;
-    private boolean isPlayerOne;
     public RandomAI(boolean isPlayerOne) {
         super(isPlayerOne);
 
         this.isPlayerOne=isPlayerOne;
-        //this.reset_bombs_and_unflippedable();
-        //registerAIPlayerType("RandomAI",RandomAI.class);
-
-
     }
 
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-       // this=new RandomAI(isPlayerOne);
         Random rand = new Random();
         int rendomDisc;
         if (this.number_of_bombs>0){
