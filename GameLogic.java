@@ -169,7 +169,12 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "countHelper" function responsible to count all flips for a given position.
+     1.The function checking all direction one by one, until we have position that tells us that we can't flip anything this way, or we can stop counting this way.
+     2. There is a few ways to invalid flip count: null position in the way, first position is disc from my type,
+        unflippable position with the opponent type or end of board.
+     3.We are using a temporary variable and array list for count the flips because we need to check the end of that direction to understand if this move should flip something.
+     4. If in the way we notice bomb disc we count that number of flips in a different function named "bombCounter".
      * @param a
      * @param p
      * @return
@@ -220,17 +225,10 @@ public class GameLogic implements PlayableLogic {
                         }
                 }
             }
-
-
         }
-
-
         return count;
     }
 
-    /**
-     *
-     */
    private void copyFlipper(){
         for (int i=0; i<tmpflipper.size();i++){
           addFlipper(tmpflipper.get(i));
@@ -398,6 +396,7 @@ public class GameLogic implements PlayableLogic {
        // updateStack();
         if(!boardSt.empty()) {
             boardSt.pop();//take out this move
+
             if (!boardSt.empty()) {
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
@@ -405,6 +404,22 @@ public class GameLogic implements PlayableLogic {
                 }
             }
                 Move m= move_st.pop();
+                if (m.disc().getType()=="💣"){
+                    if (curent.isPlayerOne()){
+                        player2.number_of_bombs++;
+                    }
+                    else {
+                        player1.number_of_bombs++;
+                    }
+                }
+                if (m.disc().getType()=="⭕"){
+                    if (curent.isPlayerOne()){
+                        player2.number_of_unflippedable++;
+                    }
+                    else {
+                        player1.number_of_unflippedable++;
+                    }
+                }
                 System.out.println("Undo: removing "+m.disc().getType()+" from: ("+m.position().row()+" , "+m.position().col()+")");
                 m.undo(board);
 

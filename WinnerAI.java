@@ -18,7 +18,10 @@ public class WinnerAI extends AIPlayer{
 
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
-        System.out.println(co++);
+        Random rand = new Random();
+        int test=rand.nextInt(3);
+        System.out.println("Winner: "+ test);
+        //System.out.println(co++);
     //take the corners and slide around
     //start with small flips 10 first moves
     //to be centered around opponent discs.
@@ -40,20 +43,20 @@ public class WinnerAI extends AIPlayer{
 
         Position corner =openCorner(gameStatus.ValidMoves()); //check if there is an available corner
         Position round_end=roundEnd(gameStatus.ValidMoves());
-       // Position p=cornerStrategy(gameStatus.ValidMoves());
+
         if (corner!=null){              //take the corner
             corners_Arr.add(corner);
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,corner);
             move_counter--;
             return move;
-        }   else if (round_end!=null & this.number_of_unflippedable>0) {
+        }   else if (round_end!=null & this.number_of_unflippedable>0) { //unflippable in the sides
             Disc disc;
                 disc = new UnflippableDisc(this);
                 Move move = new Move(disc, round_end);
                 move_counter--;
                 return move;
-        } else if (move_counter>=3) {
+        } else if (move_counter>=3) {  //close to center
             Position pos=new Position(arr.getFirst().row(),arr.getFirst().col());
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,pos);
