@@ -19,6 +19,8 @@ public class WinnerAI extends AIPlayer{
     //start with small flips 10 first moves
     //to be centered around opponent discs.
 
+        //if there is unflippable in this round allready
+
         compareFlips compFlip = new compareFlips();
         compareRows rowComp = new compareRows();
         compareColluns collComp = new compareColluns();
@@ -34,32 +36,32 @@ public class WinnerAI extends AIPlayer{
 
         Position corner =openCorner(gameStatus.ValidMoves()); //check if there is an available corner
         Position round_end=roundEnd(gameStatus.ValidMoves());
-
+        Position p=cornerStrategy(gameStatus.ValidMoves());
         if (corner!=null){
             corners_Arr.add(corner);
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,corner);
             move_counter--;
             return move;
-        } else if (!corners_Arr.isEmpty()) {
-
-                Position p=cornerStrategy();
-
-
-        } else if(move_counter>0){
+        } else if (!corners_Arr.isEmpty()& p!= null) {
+                Disc disc = new SimpleDisc(this);
+                Move move = new Move(disc,p);
+                move_counter--;
+                return move;
+//        }  else if (round_end!=null) {
+//            Disc disc;
+//            if (this.number_of_unflippedable>0) {
+//                disc = new UnflippableDisc(this);
+//                Move move = new Move(disc, round_end);
+//                move_counter--;
+//                return move;
+//            }
+        } else if (move_counter>0) {
             Position pos=new Position(arr.getFirst().row(),arr.getFirst().col());
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,pos);
             move_counter--;
             return move;
-        } else if (round_end!=null) {
-            Disc disc;
-            if (this.number_of_unflippedable>0) {
-                disc = new UnflippableDisc(this);
-                Move move = new Move(disc, round_end);
-                move_counter--;
-                return move;
-            }
         }
         Position greedyPos=new Position(arr.getLast().row(),arr.getLast().col());
             Disc disc = new SimpleDisc(this);
@@ -100,36 +102,24 @@ public class WinnerAI extends AIPlayer{
         return null;
 
     }
-    public Position cornerStrategy(){
+    public Position cornerStrategy(List <Position> arr){
         int[][] array =  {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
-        for (int i=0; i<corners_Arr.size(); i++){
-            Position p=corners_Arr.get(i);
-            for (int j=0 ; j<8 ;j++) {
-                int x = p.row() + array[j][0], y = p.col() + array[j][1];
-                Position p1 = new Position(x, y);
-
-                if ( GameLogic.isInBounds(p1)) {
-
-
-//                    if (board[x][y] != null ) {
-//                        if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1)&!board[x][y].getBoom()) {
-//                            //
-//                            if (board[x][y].getType().equals("💣")) {
+//        for (int i=0; i<corners_Arr.size(); i++){
+//            Position p=corners_Arr.get(i);
+//            for (int j=0 ; j<8 ;j++) {
+//                int x = p.row() + array[j][0], y = p.col() + array[j][1];
+//                Position p1 = new Position(x, y);
 //
-//                                // System.out.println("We have another bomb in line");
-//                                b_C+=bombCounter(x,y);
-//                                //board[x][y].setBoom(true);
-//                            }
-//                            b_C++;
-//                            tmpflipper.add(p1);
-//
-//
-//
+//                if ( GameLogic.isInBounds(p1)) {
+//                    for (int k=0;k<arr.size();k++){
+//                        if (arr.get(k).row()==x & arr.get(k).col()==y){
+//                            corners_Arr.add(p1);
+//                            return p1;
 //                        }
 //                    }
-                }
-            }
-        }
+//                }
+//            }
+//        }
         return null;
     }
 }
