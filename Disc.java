@@ -25,10 +25,10 @@ public interface Disc {
      * respectively.
      */
     String getType();
-    Player lastOwner(String peekORpop);
-    void addOwner(Player p);
-    boolean getBoom();
-    void setBoom(boolean b);
+    Player lastOwner(String peekORpop); //for getting the last owner
+    void addOwner(Player p); //for update owners stack
+    boolean getBoom(); //for knowing if this bomb explode
+    void setBoom(boolean b); //setting boom variable
 
 
 }

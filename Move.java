@@ -1,31 +1,30 @@
 import java.util.ArrayList;
 import java.util.Stack;
-
 public class Move {
     private Disc disc;
     private Position position;
     private Player cur;
-
     public ArrayList<Position> posArr=new ArrayList<>();
-
     public Position position(){
         return position;
     }
-
     public Disc disc(){
         return disc;
     }
-
     public Move(Disc disc, Position p) {
         this.disc = disc;
         this.position=p;
-
     }
     public Move(){
-
     }
 
-
+    /**
+     *
+     * @param d
+     * @param bo
+     * @param p
+     * @return
+     */
     public boolean MakeMove(Disc d,Disc[][] bo, Position p){
         cur=d.getOwner();
         if(d.getType().equals("⭕")){
@@ -40,25 +39,17 @@ public class Move {
         else {
             bo[p.row][p.col] = new SimpleDisc(cur);
         }
-
         if (cur.isPlayerOne){
             System.out.println("Player 1 placed a " + d.getType()+ " in: (" + p.row() + " , " + p.col() + ")");
         }
         else {
             System.out.println("Player 2 placed a " + d.getType()+ " in: (" + p.row() + " , " + p.col() + ")");
         }
-
-
         return true;
     }
-
-   // public void addToStack(Move m){
-   //     move_st.add(m);
-   // }
     public void addToPos(ArrayList<Position> p){
         posArr.addAll(p);
     }
-
     public Disc[][] undo(Disc [][]board){
 
         for (int i=0;i<posArr.size();i++){
