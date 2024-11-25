@@ -6,32 +6,31 @@ public class RandomAI extends AIPlayer{
         this.isPlayerOne=isPlayerOne;
     }
 
+    /**
+     * The makeMove function preform a random move.
+     1. For choosing a random disc we need to chack first which discs are available,
+        when we know that we can know what bound should the random choose.
+     2. For the position the bound equal to the valid move size.
+     * @param gameStatus
+     * @return return the created random move.
+     */
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
         Random rand = new Random();
-       // int test=rand.nextInt(3);
-        // System.out.println("Random: "+ test);
-        //rendom rand = new rendom();
         int rendomDisc;
         if (this.number_of_bombs>0){
             if (this.number_of_unflippedable>0){
                  rendomDisc= rand.nextInt(3);
-                //rendomDisc=rand.ren_num(3);
-
             }
             else {
-                 //rendomDisc=rand.ren_num(2);
                 rendomDisc= rand.nextInt(2);
             }
         } else if (this.number_of_unflippedable>0) {
-            // rendomDisc= r.ren_num(2)+1;
             rendomDisc=rand.nextInt(2)+1;
         }
         else {
              rendomDisc= 1;
         }
-
-        //int valid = r.ren_num(gameStatus.ValidMoves().size());
         int valid = rand.nextInt(gameStatus.ValidMoves().size());
         Disc disc = chooseDisc(rendomDisc);
         Position pos =(gameStatus.ValidMoves().get(valid));
@@ -44,14 +43,12 @@ public class RandomAI extends AIPlayer{
         Disc d;
         if(c==0){
                 d = new BombDisc(this);
-               // this.reduce_bomb();
 
         } else if (c==1) {
             d=new SimpleDisc(this);
         }
         else {
             d=new UnflippableDisc(this);
-           // this.reduce_unflippedable();
         }
         return d;
     }

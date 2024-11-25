@@ -19,7 +19,9 @@ public class Move {
     }
 
     /**
-     *
+     *The "MakeMove" function place the given disc in the given position.
+        1."MakeMove" checks what type of disc is it and according to this reducing number of bombs and unflippable disc,
+        and also printing the correct outputs.
      * @param d
      * @param bo
      * @param p
@@ -47,9 +49,21 @@ public class Move {
         }
         return true;
     }
+
+    /**
+     * This function adds to an array list all the position that need to be flip.
+     * @param p
+     */
     public void addToPos(ArrayList<Position> p){
         posArr.addAll(p);
     }
+
+    /**
+     * The "undo" function is a function that help to undo last move, this function preform the "flipping back" part.
+     * For each position in "posArr" undo pop out the last owner and set him to be the new present owner.
+     * @param board
+     * @return board after updated owners.
+     */
     public Disc[][] undo(Disc [][]board){
 
         for (int i=0;i<posArr.size();i++){
@@ -61,7 +75,4 @@ public class Move {
         System.out.println("");
         return board;
     }
-
-
-
 }

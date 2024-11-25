@@ -500,7 +500,7 @@ public class GameLogic implements PlayableLogic {
      */
     private int bcHelper(int [][] a, Position p){
         int b_C=0;
-        p.setBoom(true); //say that the bomb in this position bomb in this turn
+        //p.setBoom(true); //say that the bomb in this position bomb in this turn
         for (int i=0 ; i<8 ;i++) {
             int x = p.row() + a[i][0], y = p.col() + a[i][1];
             Position p1 = new Position(x, y);

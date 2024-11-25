@@ -4,6 +4,11 @@ public class UnflippableDisc implements Disc {
     private  Player curentplayer;
     private Stack<Player> owners=new Stack<>();
 
+    /**
+     * This constructor create a unflippable disc.
+     * It's check first if there is available unflippable discs for the current player, If not throw an exeption.
+     * @param cur
+     */
     public UnflippableDisc(Player cur) {
         if (cur.getNumber_of_unflippedable()==0){
             System.out.println("Number of unflippedable discs is 0 , Please try a different disc");
@@ -31,6 +36,13 @@ public class UnflippableDisc implements Disc {
     public String getType() {
         return "⭕";
     }
+
+    /**
+     * The "lastOwner" function return the last owner for given position.
+     * This function gives the option to peek or pop the stack.
+     * @param peekORpop
+     * @return
+     */
     @Override
     public Player lastOwner(String peekORpop){
         if(owners.size()<2){
@@ -43,6 +55,10 @@ public class UnflippableDisc implements Disc {
             return owners.peek();
         }
     }
+    /**
+     * The "addOwner" function adding an owner to the disc owners stack.
+     * @param p
+     */
     @Override
     public void addOwner(Player p){
         owners.add(p);
