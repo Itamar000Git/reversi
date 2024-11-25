@@ -489,7 +489,11 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "bcHelper" function count hoe many flips a bomb can flip in a given position.
+     * "bcHelper checks the squarer around the given position, if its valid and if it supposed to flip from this bomb.
+     * "bchelper" take care as wel in the option that there is another bomb around and go again to "bombCounter" for counting,
+     * We are avoiding unlimited loop by setting true in the "boom" method in each position (p.setBoom(true)).
+     * The position that supposed to flip being added to the "tmpflipper" array list.
      * @param a
      * @param p
      * @return
@@ -517,7 +521,10 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "bombCounter" function return the number of disc that supposed to flip from given boom position (x,y).
+     * The function creates an array that indicate the direction that need to be checked, and send to "bcHelper" function for the actual count.
+     * We also make sure to avoid unlimited loop in the case of few bombs around by setting for boom position true in a "setBoom" method,
+     * and after counting setting to false for the boom to count the next round.
      * @param x
      * @param y
      * @return
@@ -536,7 +543,8 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "neighbor_Update" function setting true in eah position around a disc that being placed.
+     * That helps us to know the valid moves around the board.
      * @param a
      */
     private  void neighbor_Update(Position a){
