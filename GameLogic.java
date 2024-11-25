@@ -229,6 +229,9 @@ public class GameLogic implements PlayableLogic {
         return count;
     }
 
+    /**
+     * The "copyFlipper" function being called just when we sure that this move is valid and flips t list 1 opponent's discs.
+     */
    private void copyFlipper(){
         for (int i=0; i<tmpflipper.size();i++){
           addFlipper(tmpflipper.get(i));
@@ -256,7 +259,6 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public Player getFirstPlayer() {
-
         return player1 ;
     }
 
@@ -267,21 +269,19 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void setPlayers(Player player1, Player player2) {
-
        this.player1=player1;
        this.player2=player2;
-
     }
 
     @Override
     public boolean isFirstPlayerTurn() {
         return firstPlayerTurn;
-
     }
 
     /**
-     *
-     * @return
+     *The "isGameFinished" function checks if there is no more valid move to be done, When that happened the game is done.
+     * We need to count how many discs have each player ad decide how is the winner, update the wining count and print a massage.
+     * @return true if there is no more valid moves.
      */
     @Override
     public boolean isGameFinished() {
@@ -319,7 +319,8 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "reset" function initial the board with the 4 discs, 2 for each player.
+     * Also, "reset" initial number of bombs and unflippable discs.
      */
     @Override
     public void reset() {
@@ -347,7 +348,8 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "updateHelper" function being used when we need to add a new bord to the board stack (for undo move).
+     * "updateHelper" get two board and checks if there is something different.
      * @param A
      * @param B
      * @return
@@ -364,7 +366,8 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "updateStack" function preforming deep copy between new board to the last game board.
+     * This function preform this deep capo if the stack is empty or this is a new board (there is a different).
      */
     private void updateStack(){
         if(boardSt.empty()){
@@ -386,69 +389,57 @@ public class GameLogic implements PlayableLogic {
         }
     }
 /**
- *
+ *The "undoLastMove" function preform the "back" move the game return to the last game board and printing the last move. It can come back al the way to start position.
+    1.First the function takes out the present move and if this is not the first move there is another board in the stack.
+    2. After that we are copy last-move-board discs to the present board.
+    3.If the last move was bomb or unflippable disc we update back the limits numbers.
+    4.Return the turn back to the opponent.
  */
     @Override
     public void undoLastMove() {
-
         System.out.println("Undoing last move:");
-
-       // updateStack();
         if(!boardSt.empty()) {
             boardSt.pop();//take out this move
 
             if (!boardSt.empty()) {
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
                         board[i][j] = boardSt.peek()[i][j]; //reload the last move
-                }
-            }
-                Move m= move_st.pop();
-                if (m.disc().getType()=="💣"){
-                    if (curent.isPlayerOne()){
-                        player2.number_of_bombs++;
                     }
-                    else {
+                }
+                Move m = move_st.pop();
+                if (m.disc().getType() == "💣") {
+                    if (curent.isPlayerOne()) {
+                        player2.number_of_bombs++;
+                    } else {
                         player1.number_of_bombs++;
                     }
                 }
-                if (m.disc().getType()=="⭕"){
-                    if (curent.isPlayerOne()){
+                if (m.disc().getType() == "⭕") {
+                    if (curent.isPlayerOne()) {
                         player2.number_of_unflippedable++;
-                    }
-                    else {
+                    } else {
                         player1.number_of_unflippedable++;
                     }
                 }
-                System.out.println("Undo: removing "+m.disc().getType()+" from: ("+m.position().row()+" , "+m.position().col()+")");
+                System.out.println("Undo: removing " + m.disc().getType() + " from: (" + m.position().row() + " , " + m.position().col() + ")");
                 m.undo(board);
-
-                firstPlayerTurn=!firstPlayerTurn;
-                if(isFirstPlayerTurn()) {
+                firstPlayerTurn = !firstPlayerTurn;
+                if (isFirstPlayerTurn()) {
                     curent = player1;
+                } else {
+                    curent = player2;
                 }
-                else{
-                    curent=player2;
-                }
-
-             //   ValidMoves();
-
-        }
-            else {
+            } else {
                 System.out.println("\tNo previous move available to undo.");
-
-
-               // reset();
             }
         }
-
-
     }
 
     /**
-     *
+     *The "avoidDup" make sure that there is no doplicate position is the flipper and tmpflipper arraylists.
      * @param p
-     * @return
+     * @return true if there is no duplicate.
      */
     private boolean avoidDup(Position p){
         int x=p.row(),y=p.col();
@@ -468,9 +459,9 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "addFlipper" function adds to ak flipper array list the position if that position us not already inside.
      * @param p
-     * @return
+     * @return true if that position added.
      */
     private static boolean addFlipper(Position p){
         int x =p.row();
@@ -485,9 +476,9 @@ public class GameLogic implements PlayableLogic {
     }
 
     /**
-     *
+     *The "isInBounds" function make sure that the given position is inside the board.
      * @param p
-     * @return
+     * @return return true if the position is inside.
      */
     public static boolean isInBounds(Position p){
         int x = p.row(), y = p.col();
@@ -511,29 +502,17 @@ public class GameLogic implements PlayableLogic {
             Position p1 = new Position(x, y);
 
             if ( isInBounds(p1)) {
-
-
             if (board[x][y] != null ) {
                 if (board[x][y].getOwner() != curent & !board[x][y].getType().equals("⭕") & avoidDup(p1)&!board[x][y].getBoom()) {
-                   //
                     if (board[x][y].getType().equals("💣")) {
-
-                           // System.out.println("We have another bomb in line");
-                            b_C+=bombCounter(x,y);
-                            //board[x][y].setBoom(true);
+                         b_C+=bombCounter(x,y);
                         }
                         b_C++;
                         tmpflipper.add(p1);
-
-
-
                 }
             }
         }
-
-
         }
-
         return b_C;
     }
 
