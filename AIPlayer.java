@@ -7,7 +7,7 @@ public abstract class AIPlayer extends Player {
     public static void registerAllAIPlayers() {
         registerAIPlayerType("RandomAI", RandomAI.class);
         registerAIPlayerType("GreedyAI", GreedyAI.class);
-        registerAIPlayerType("WinnerAI", WinnerAI.class);
+        registerAIPlayerType("minMaxAI", minMaxAI.class);
 
         // Add more AIPlayer subclasses here as needed
     }

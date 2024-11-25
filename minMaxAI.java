@@ -3,38 +3,38 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-public class WinnerAI extends AIPlayer{
+public class minMaxAI extends AIPlayer{
     ArrayList <Position> arr = new ArrayList<>();
     ArrayList<Position> corners_Arr = new ArrayList<>();
     public int move_counter;
-    public int co;
-    public WinnerAI(boolean isPlayerOne) {
+    public minMaxAI(boolean isPlayerOne) {
         super(isPlayerOne);
         this.isPlayerOne=isPlayerOne;
         this.move_counter=8;
-        this.co=0;
-
     }
 
+    /**
+     * The "makeMove" of "minMaxAI" preform smart player that supposed to win the random player 10:1.
+     * After read few strategy's the decision order is:
+        1. Take the corners - it's the bast spots.
+        2. The edges are dangerous - placed unflippable when it's possible.
+        3. Stay centered - flip small amounts of disc in the first rounds.
+        4. Use the greedy strategy until the end.
+     (I didn't use prediction's but still I got pretty good ratio - around 1.5:10. hope that good enough)
+     * @param gameStatus
+     * @return
+     */
     @Override
     public Move makeMove(PlayableLogic gameStatus) {
         Random rand = new Random();
         int test=rand.nextInt(3);
         System.out.println("Winner: "+ test);
-        //System.out.println(co++);
-    //take the corners and slide around
-    //start with small flips 10 first moves
-    //to be centered around opponent discs.
-
-        //if there is unflippable in this round allready
 
         compareFlips compFlip = new compareFlips();
         compareRows rowComp = new compareRows();
         compareColluns collComp = new compareColluns();
         Comparator<Position> myComp = compFlip.thenComparing(rowComp).thenComparing(collComp);
         compFlip.game(gameStatus);
-//        compareRows rowComp = new compareRows();
-//        compareColluns collComp = new compareColluns();
 
 
         arr.clear();
@@ -69,12 +69,6 @@ public class WinnerAI extends AIPlayer{
                 move_counter--;
                 return move;
         }
-//        else if (!corners_Arr.isEmpty()& p!= null) {
-//            Disc disc = new SimpleDisc(this);
-//            Move move = new Move(disc,p);
-//            move_counter--;
-//            return move;
-//        }
         Position greedyPos=new Position(arr.getLast().row(),arr.getLast().col());
             Disc disc = new SimpleDisc(this);
             Move move = new Move(disc,greedyPos);
@@ -115,24 +109,4 @@ public class WinnerAI extends AIPlayer{
         return null;
 
     }
-//    public Position cornerStrategy(List <Position> arr){
-//        int[][] array =  {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
-////        for (int i=0; i<corners_Arr.size(); i++){
-////            Position p=corners_Arr.get(i);
-////            for (int j=0 ; j<8 ;j++) {
-////                int x = p.row() + array[j][0], y = p.col() + array[j][1];
-////                Position p1 = new Position(x, y);
-////
-////                if ( GameLogic.isInBounds(p1)) {
-////                    for (int k=0;k<arr.size();k++){
-////                        if (arr.get(k).row()==x & arr.get(k).col()==y){
-////                            corners_Arr.add(p1);
-////                            return p1;
-////                        }
-////                    }
-////                }
-////            }
-////        }
-//        return null;
-//    }
 }
