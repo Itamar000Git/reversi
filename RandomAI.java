@@ -42,7 +42,7 @@ public class RandomAI extends AIPlayer{
     private Disc chooseDisc(int c){
         Disc d;
         if(c==0){
-                d = new BombDisc(this);
+            d = new BombDisc(this);
 
         } else if (c==1) {
             d=new SimpleDisc(this);
